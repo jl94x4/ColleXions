@@ -31,7 +31,7 @@ Extract the files in the location you wish to run it from
 
 Run ```pip install -r requirements.txt``` to install dependencies
 
-Update the config.json file with your Plex URL, token, library names, and exclusion lists. 
+Update the ```config.json``` file with your Plex URL, token, library names, and exclusion lists. 
 
 Run ```python3 ColleXions.py```
 
