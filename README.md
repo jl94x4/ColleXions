@@ -12,12 +12,15 @@ The Plex Collection Pinning Tool automates the pinning of collections to your Pl
 
 ## Installation
 Extract the files in the location you wish to run it from
-Run ```pip install -r requirements.txt```
-Update the config.json file with your Plex URL, token, library names, and exclusion lists.
-Run ```python3 ColleXions.py```
 
-## License
-This project is licensed under the MIT License.
+Run ```pip install -r requirements.txt``` 
+
+Update the config.json file with your Plex URL, token, library names, and exclusion lists. 
+
+Run ```python3 ColleXions.py```
 
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
+
+## License
+This project is licensed under the MIT License.
