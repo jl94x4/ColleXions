@@ -87,6 +87,40 @@ def get_special_collections(config):
     
     return special_collections
 
+# Filter collections to pin based on inclusion, exclusion, and special dates
+def filter_collections(config, all_collections, special_collections):
+    inclusion_list = config.get('include_list', [])
+    exclusion_list = config.get('exclusion_list', [])
+    use_inclusion_list = config.get('use_inclusion_list', False)
+
+    collections_to_pin = []
+
+    # Filter by special collections first
+    for special_collection in special_collections:
+        matched_collections = [c for c in all_collections if c.title == special_collection]
+        collections_to_pin.extend(matched_collections)
+
+    # Remove special collections from available collections to avoid duplicates
+    available_collections = [c for c in all_collections if c.title not in special_collections]
+
+    # If using inclusion list
+    if use_inclusion_list:
+        logging.info(f"Using inclusion list: {inclusion_list}")
+        available_collections = [c for c in available_collections if c.title in inclusion_list]
+    else:
+        # Otherwise, exclude based on exclusion list
+        logging.info(f"Using exclusion list: {exclusion_list}")
+        available_collections = [c for c in available_collections if c.title not in exclusion_list]
+
+    # Select additional collections if there are slots left to pin
+    if len(collections_to_pin) < config['number_of_collections_to_pin']:
+        remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
+        if available_collections:
+            additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
+            collections_to_pin.extend(additional_collections)
+
+    return collections_to_pin
+
 # Main loop to randomly select and pin collections
 def main():
     config = load_config()
@@ -95,40 +129,19 @@ def main():
     library_names = config.get('library_names', ['Movies'])  # Fetch the library names from the config
 
     while True:
-        unpin_collections(plex, library_names, exclusion_list)  # Unpin existing collections before pinning new ones
-        
+        # Step 1: Unpin currently pinned collections
+        unpin_collections(plex, library_names, exclusion_list)
+
+        # Step 2: Get special collections based on current date
         special_collections = get_special_collections(config)
-        logging.info(f"Special collections found: {special_collections}")  # Debugging line
+
+        # Step 3: Get all collections from the libraries
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
-        collections_to_pin = []
-        already_pinned_titles = set()  # Track collections that have been pinned
+        # Step 4: Filter collections based on special collections, inclusion, and exclusion
+        collections_to_pin = filter_collections(config, all_collections, special_collections)
 
-        # Pin special collections first
-        if special_collections:
-            logging.info("Found special collections to pin.")
-            for collection_name in special_collections:
-                matched_collections = [c for c in all_collections if c.title == collection_name]
-                for collection in matched_collections:
-                    if collection.title not in already_pinned_titles:
-                        collections_to_pin.append(collection)
-                        already_pinned_titles.add(collection.title)
-
-        # If there are still collections to pin, pick randomly from all available (excluding special and duplicates)
-        if len(collections_to_pin) < config['number_of_collections_to_pin']:
-            remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
-
-            if config.get('use_inclusion_list', False):
-                available_collections = [c for c in all_collections if c.title in config['include_list'] and c.title not in already_pinned_titles]
-            else:
-                available_collections = [c for c in all_collections if c.title not in already_pinned_titles and c.title not in exclusion_list]
-
-            if available_collections:
-                additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
-                collections_to_pin.extend(additional_collections)
-                already_pinned_titles.update([c.title for c in additional_collections])
-
-        # Pin the collections
+        # Step 5: Pin the collections
         if collections_to_pin:
             pin_collections(collections_to_pin)
         else:
