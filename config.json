@@ -1,10 +1,10 @@
 {
-    "plex_url": "http://plexip:port", # Plex IP:Port
-    "plex_token": "plex-token", # Plex Token
-    "library_names": ["Movies Lib", "TV Shows Lib"], # Libraries
-    "pinning_interval": 21600, # Pinning Interval in minutes
-    "number_of_collections_to_pin": 3, # Number of collections you wish to pin
-    "special_collections": [  # Use this area to add specialized collections
+    "plex_url": "http://plexip:port", 
+    "plex_token": "plex-token", 
+    "library_names": ["Movies Lib", "TV Shows Lib"], 
+    "pinning_interval": 21600,
+    "number_of_collections_to_pin": 3, 
+    "special_collections": [ 
         {
             "start_date": "2024-10-01",
             "end_date": "2024-10-31",
