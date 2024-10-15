@@ -18,6 +18,14 @@ ColleXions automates the process of pinning collections to your Plex home screen
 
 - **Include Collections:** The inclusion list is the opposite of the exclusion list. It allows you to specify exactly which collections should be considered for pinning. This gives you control over which collections can be pinned, filtering the selection to only a few curated options. Make sure ```"use_inclusion_list": false,``` is set appropriately for your use case.
 
+## How Include & Exclude Work Together 
+
+- If the inclusion list is enabled (i.e., use_inclusion_list is set to True), the script only picks collections from the inclusion list. Special collections are added if they are active during the date range.
+
+- If no inclusion list is provided, the script will attempt to pick collections randomly from the entire library while respecting the exclusion list. The exclusion list is always active and prevents specific collections from being pinned.
+
+- If the inclusion list is turned off or not defined (use_inclusion_list is set to False or missing), the exclusion list will still be honored, ensuring that any collections in the exclusion list are never pinned.
+
 ## Installation
 Extract the files in the location you wish to run it from
 
