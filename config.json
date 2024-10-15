@@ -2,6 +2,7 @@
     "plex_url": "http://plexip:port", 
     "plex_token": "plex-token", 
     "library_names": ["Movies Lib", "TV Shows Lib"], 
+    "exclusion_list": ["Collection 1", "Collection 2", "Collection 3"],
     "pinning_interval": 21600,
     "number_of_collections_to_pin": 3, 
     "special_collections": [ 
