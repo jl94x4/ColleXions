@@ -6,7 +6,9 @@ ColleXions automates the process of pinning collections to your Plex home screen
 
 - **Special Occasion Collections:** Automatically prioritizes collections linked to specific dates, making sure seasonal themes are highlighted when appropriate.
 
-- **Exclusion List:** Users can specify collections to exclude from pinning, ensuring that only the most relevant or desired collections are featured.
+- **Exclusion List:** Users can specify collections to exclude from pinning, ensuring that collections you don't want to see on the home screen are never selected.
+
+- **Inclusion List:** Users can specify collections to include from pinning, ensuring full control over the collections you see on your home screen.
 
 - **Customizable Settings:** Users can easily adjust library names, pinning intervals, and the number of collections to pin, tailoring the experience to their preferences.
 
