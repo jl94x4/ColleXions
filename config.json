@@ -1,27 +1,45 @@
 {
-    "plex_url": "http://localurl:32400",
+    "plex_url": "http://local-url:32400",
     "plex_token": "your-plex-token",
-    "library_names": ["Movies", "TV Shows"],
-    "exclusion_list": ["Collection 1", "Collection 2"],
+    "library_names": [
+        "Movies", 
+        "TV Shows"
+    ],
+    "exclusion_list": [
+        "Collection 1", 
+        "Collection 2"
+    ],
     "use_inclusion_list": false,
-    "include_list": ["Collection 3", "Collection 4"],
+    "include_list": [
+        "Collection 3", 
+        "Collection 4"
+    ],
     "pinning_interval": 21600,
     "number_of_collections_to_pin": 3,
     "special_collections": [
         {
             "start_date": "2024-10-01",
             "end_date": "2024-10-31",
-            "collection_names": ["Halloween Movies", "Horror Movies"]
+            "collection_names": [
+                "Halloween Movies", 
+                "Horror Movies"
+            ]
         },
         {
             "start_date": "2024-12-01",
             "end_date": "2024-12-27",
-            "collection_names": ["Christmas Classics", "Holiday Specials", "Top Christmas Movies Of All Time"]
+            "collection_names": [
+                "Christmas Classics", 
+                "Holiday Specials"
+            ]
         },
         {
             "start_date": "2024-02-14",
             "end_date": "2024-02-15",
-            "collection_names": ["Chick Flicks", "Valentines Day"]
+            "collection_names": [
+                "Valentines Day", 
+                "Chick Flicks"
+            ]
         }
     ]
 }
