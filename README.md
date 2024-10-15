@@ -10,7 +10,10 @@ The Plex Collection Pinning Tool automates the pinning of collections to your Pl
 - **Exclusion List:** Specify collections to exclude from pinning.
 - **Customizable Settings:** Adjust library names, pinning intervals, and the number of collections to pin.
 
-## Installation
+## Configuration
+Update the config.json file with your Plex URL, token, library names, and exclusion lists.
+
+Run ```python3 ColleXions.py```
 
 ## License
 This project is licensed under the MIT License.
