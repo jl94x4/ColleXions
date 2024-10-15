@@ -2,8 +2,8 @@ from plexapi.server import PlexServer
 import logging
 
 # Configuration
-URL = 'http://192.168.1.22:32400'  # Replace with your Plex server's IP and port
-TOKEN = '8EUr6weXaTGnEUm2mHJi'  # Replace with your actual Plex token
+URL = 'http://ip:32400'  # Replace with your Plex server's IP and port
+TOKEN = 'plex-token'  # Replace with your actual Plex token
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
