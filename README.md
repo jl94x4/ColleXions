@@ -11,3 +11,9 @@ The Plex Collection Pinning Tool automates the pinning of collections to your Pl
 - **Customizable Settings:** Adjust library names, pinning intervals, and the number of collections to pin.
 
 ## Installation
+
+## License
+This project is licensed under the MIT License.
+
+## Acknowledgments
+Thanks to the PlexAPI library and the open-source community for their support.
