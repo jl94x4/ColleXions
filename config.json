@@ -1,11 +1,13 @@
 {
-    "plex_url": "http://plexip:port", 
-    "plex_token": "plex-token", 
-    "library_names": ["Movies Lib", "TV Shows Lib"], 
-    "exclusion_list": ["Collection 1", "Collection 2", "Collection 3"],
+    "plex_url": "http://localurl:32400",
+    "plex_token": "your-plex-token",
+    "library_names": ["Movies", "TV Shows"],
+    "exclusion_list": ["Collection 1", "Collection 2"],
+    "use_inclusion_list": false,
+    "include_list": ["Collection 3", "Collection 4"],
     "pinning_interval": 21600,
-    "number_of_collections_to_pin": 3, 
-    "special_collections": [ 
+    "number_of_collections_to_pin": 3,
+    "special_collections": [
         {
             "start_date": "2024-10-01",
             "end_date": "2024-10-31",
@@ -14,7 +16,7 @@
         {
             "start_date": "2024-12-01",
             "end_date": "2024-12-27",
-            "collection_names": ["Christmas Classics", "Holiday Specials"]
+            "collection_names": ["Christmas Classics", "Holiday Specials", "Top Christmas Movies Of All Time"]
         },
         {
             "start_date": "2024-02-14",
