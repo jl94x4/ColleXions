@@ -102,21 +102,31 @@ def main():
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
         collections_to_pin = []
+        already_pinned_titles = set()  # Track collections that have been pinned
 
         # Pin special collections first
         if special_collections:
             logging.info("Found special collections to pin.")
             for collection_name in special_collections:
                 matched_collections = [c for c in all_collections if c.title == collection_name]
-                collections_to_pin.extend(matched_collections)
+                for collection in matched_collections:
+                    if collection.title not in already_pinned_titles:
+                        collections_to_pin.append(collection)
+                        already_pinned_titles.add(collection.title)
 
-        # If there are still collections to pin, pick randomly from all available (excluding special)
+        # If there are still collections to pin, pick randomly from all available (excluding special and duplicates)
         if len(collections_to_pin) < config['number_of_collections_to_pin']:
             remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
-            available_collections = [c for c in all_collections if c.title not in collections_to_pin and c.title not in exclusion_list]
+
+            if config.get('use_inclusion_list', False):
+                available_collections = [c for c in all_collections if c.title in config['include_list'] and c.title not in already_pinned_titles]
+            else:
+                available_collections = [c for c in all_collections if c.title not in already_pinned_titles and c.title not in exclusion_list]
+
             if available_collections:
                 additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
                 collections_to_pin.extend(additional_collections)
+                already_pinned_titles.update([c.title for c in additional_collections])
 
         # Pin the collections
         if collections_to_pin:
