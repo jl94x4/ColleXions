@@ -10,6 +10,12 @@ ColleXions automates the process of pinning collections to your Plex home screen
 
 - **Customizable Settings:** Users can easily adjust library names, pinning intervals, and the number of collections to pin, tailoring the experience to their preferences.
 
+## Include & Exclude Collections
+
+- **Exclude Collections:** The exclusion list allows you to specify collections that should never be pinned. These collections are "blacklisted," meaning that even if they are randomly selected or included in the special collections, they will be skipped
+
+- **Include Collections:** The inclusion list is the opposite of the exclusion list. It allows you to specify exactly which collections should be considered for pinning. This gives you control over which collections can be pinned, filtering the selection to only a few curated options.
+
 ## Installation
 Extract the files in the location you wish to run it from
 
