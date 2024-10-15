@@ -26,6 +26,12 @@ ColleXions automates the process of pinning collections to your Plex home screen
 
 - If the inclusion list is turned off or not defined (use_inclusion_list is set to False or missing), the exclusion list will still be honored, ensuring that any collections in the exclusion list are never pinned.
 
+## Special Collections Enforcement
+
+- Special collections will only be pinned during their active dates. If a special collection is found outside its defined date range, it will be skipped.
+This ensures that users can't pin special collections out of season (e.g., Halloween movies in December).
+
+
 ## Installation
 Extract the files in the location you wish to run it from
 
