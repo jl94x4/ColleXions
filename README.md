@@ -45,6 +45,8 @@ Run ```python3 ColleXions.py```
 
 Download the ```config.json``` and edit to your liking
 
+https://github.com/jl94x4/ColleXions/blob/main/config.json
+
 ```docker run -it --name collexions -v /path/to/config.json:/app/config.json docker.io/jl94x4/collexions```
 
 # Docker Compose
