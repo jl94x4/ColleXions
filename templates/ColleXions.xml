@@ -1,0 +1,19 @@
+<Container>
+  <Name>ColleXions</Name>
+  <Repository>docker.io/jl94x4/collexions:latest</Repository>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/jl94x4/collexions/issues</Support>
+  <Overview>ColleXions automates the process of pinning collections to your Plex home screen, making it easier to showcase your favorite content. With customizable features, it enhances your Plex experience by dynamically adjusting what is displayed, randomly.</Overview>
+  <Category>Other</Category>
+  <Config>
+    <Data>
+      <Volume>
+        <HostDir>/mnt/user/appdata/collexions/</HostDir>
+        <ContainerDir>/app/config</ContainerDir>
+        <Mode>rw</Mode>
+      </Volume>
+    </Data>
+  </Config>
+</Container>
