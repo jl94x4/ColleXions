@@ -3,11 +3,20 @@ import logging
 import time
 import json
 import os
+import sys
 from plexapi.server import PlexServer
 from datetime import datetime
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging to file with UTF-8 encoding for console output
+LOG_FILE = 'collections.log'
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),  # Use UTF-8 encoding for log file
+        logging.StreamHandler(sys.stdout)  # Use standard output for console
+    ]
+)
 
 # Configuration file path
 CONFIG_FILE = 'config.json'
@@ -49,9 +58,9 @@ def pin_collections(collections):
     for collection in collections:
         try:
             logging.info(f"Attempting to pin collection: {collection.title}")
-            hub = collection.visibility()  # Get the visibility hub for the collection
-            hub.promoteHome()  # Pin to the home screen
-            hub.promoteShared()  # Pin to friends' home screens
+            hub = collection.visibility()
+            hub.promoteHome()
+            hub.promoteShared()
             logging.info(f"Collection '{collection.title}' pinned successfully to Home and Friends' Home screens.")
         except Exception as e:
             logging.error(f"Unexpected error while pinning collection: {collection.title}. Error: {str(e)}")
@@ -66,9 +75,9 @@ def unpin_collections(plex, library_names, exclusion_list):
                 continue
             
             hub = collection.visibility()
-            if hub._promoted:  # Check if the collection is pinned
-                hub.demoteHome()  # Unpin from the home screen
-                hub.demoteShared()  # Unpin from friends' home screens
+            if hub._promoted:
+                hub.demoteHome()
+                hub.demoteShared()
                 logging.info(f"Collection '{collection.title}' unpinned successfully.")
 
 # Check for special scheduled collections
@@ -83,14 +92,15 @@ def get_special_collections(config):
         end_date = datetime.strptime(special['end_date'], '%Y-%m-%d').date()
         
         if start_date <= current_date <= end_date:
-            special_collections.extend(special['collection_names'])  # Collect all special collection names
+            special_collections.extend(special['collection_names'])
     
     return special_collections
 
-# Filter collections to pin based on inclusion, exclusion, and special dates
+# Filter collections based on inclusion, exclusion, special dates, and labels
 def filter_collections(config, all_collections, special_collections):
     inclusion_list = config.get('include_list', [])
     exclusion_list = config.get('exclusion_list', [])
+    label_exclusion_list = config.get('label_exclusion_list', [])
     use_inclusion_list = config.get('use_inclusion_list', False)
 
     collections_to_pin = []
@@ -108,9 +118,15 @@ def filter_collections(config, all_collections, special_collections):
         logging.info(f"Using inclusion list: {inclusion_list}")
         available_collections = [c for c in available_collections if c.title in inclusion_list]
     else:
-        # Otherwise, exclude based on exclusion list
+        # Exclude based on exclusion list
         logging.info(f"Using exclusion list: {exclusion_list}")
         available_collections = [c for c in available_collections if c.title not in exclusion_list]
+    
+    # Exclude collections based on labels
+    logging.info(f"Excluding collections with labels: {label_exclusion_list}")
+    available_collections = [
+        c for c in available_collections if not any(label.tag in label_exclusion_list for label in c.labels)
+    ]
 
     # Select additional collections if there are slots left to pin
     if len(collections_to_pin) < config['number_of_collections_to_pin']:
@@ -126,7 +142,7 @@ def main():
     config = load_config()
     plex = connect_to_plex(config)
     exclusion_list = config.get('exclusion_list', [])
-    library_names = config.get('library_names', ['Movies'])  # Fetch the library names from the config
+    library_names = config.get('library_names', ['Movies'])
 
     while True:
         # Step 1: Unpin currently pinned collections
@@ -138,7 +154,7 @@ def main():
         # Step 3: Get all collections from the libraries
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
-        # Step 4: Filter collections based on special collections, inclusion, and exclusion
+        # Step 4: Filter collections based on special collections, inclusion, exclusion, and labels
         collections_to_pin = filter_collections(config, all_collections, special_collections)
 
         # Step 5: Pin the collections
