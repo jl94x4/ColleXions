@@ -28,8 +28,10 @@ ColleXions automates the process of pinning collections to your Plex home screen
 
 ## Special Collections Enforcement
 
-- Special collections will only be pinned during their active dates. If a special collection is found outside its defined date range, it will be skipped.
-This ensures that users can't pin special collections out of season (e.g., Halloween movies in December).
+- **PLEASE NOTE:** If you do not want any collections from the special collections sections of your config to be randomly selected outside of their schedule dates, the collections **must** be put on the **exclude** list. 
+- Special collections will only be pinned during their active dates when the collection is also on the Exclude list. If a special collection is found outside of its defined date range, it will be skipped unless it is not on the exclude list.
+- 
+This feature enables users to stop special collections being pinned out of season (e.g., Halloween movies in December) but still gives flexibility in other circumstances.
 
 
 ## Installation
