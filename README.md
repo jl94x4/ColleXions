@@ -47,7 +47,9 @@ Download the ```config.json``` and edit to your liking
 
 ```docker run -it -v /path/to/config.json:/app/config.json docker.io/jl94x4/collexions```
 
-**Please note: Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
+## Config Notez
+
+**Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
 
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
