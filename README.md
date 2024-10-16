@@ -47,10 +47,12 @@ Download the ```config.json``` and edit to your liking
 
 https://github.com/jl94x4/ColleXions/blob/main/config.json
 
-```docker run -it --name ColleXions \
-  -v /path/to/ColleXions/config.json:/app/config.json \
-  -v /path/to/ColleXions/logs:/app/collexions.log \
-  docker.io/jl94x4/collexions```
+```
+docker run -it --name ColleXions \
+  -v /mnt/nvme/plexified/services/ColleXions/config.json:/app/config.json \
+  -v /mnt/nvme/plexified/services/ColleXions/logs:/app/collexions.log \
+  docker.io/jl94x4/collexions
+```
 
 ## Docker Compose
 
