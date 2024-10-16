@@ -8,7 +8,7 @@ from plexapi.server import PlexServer
 from datetime import datetime
 
 # Configure logging to file with UTF-8 encoding for console output
-LOG_FILE = 'collexions.log'
+LOG_FILE = 'logs/collexions.log'
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
