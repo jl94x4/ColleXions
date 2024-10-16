@@ -110,7 +110,7 @@ def get_special_collections(config):
     return special_collections
 
 # Filter collections based on inclusion and exclusion
-def filter_collections(config, all_collections, special_collections):
+def filter_collections(config, all_collections):
     inclusion_list = config.get('include_list', [])
     exclusion_list = config.get('exclusion_list', [])
     use_inclusion_list = config.get('use_inclusion_list', False)
@@ -139,11 +139,16 @@ def filter_collections(config, all_collections, special_collections):
 
     # Select additional collections if there are slots left to pin
     remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
-    if remaining_slots > 0 and available_collections:
-        additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
-        collections_to_pin.extend(additional_collections)
 
-    return collections_to_pin
+    if remaining_slots > 0 and available_collections:
+        # Allow collections on the exclusion list if they are valid special collections
+        additional_collections = [c for c in all_collections if c.title in valid_special_collections or c.title not in exclusion_list]
+        if additional_collections:
+            additional_collections = random.sample(additional_collections, min(remaining_slots, len(additional_collections)))
+            collections_to_pin.extend(additional_collections)
+
+    # Ensure the number of collections pinned does not exceed the defined limit
+    return collections_to_pin[:config['number_of_collections_to_pin']]
 
 # Main loop to randomly select and pin collections
 def main():
@@ -160,7 +165,7 @@ def main():
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
         # Step 3: Filter collections based on special collections, inclusion, and exclusion
-        collections_to_pin = filter_collections(config, all_collections, exclusion_list)
+        collections_to_pin = filter_collections(config, all_collections)
 
         # Step 4: Pin the collections
         if collections_to_pin:
