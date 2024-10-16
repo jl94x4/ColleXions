@@ -91,9 +91,14 @@ def get_special_collections(config):
         start_date = datetime.strptime(special['start_date'], '%Y-%m-%d').date()
         end_date = datetime.strptime(special['end_date'], '%Y-%m-%d').date()
         
+        logging.info(f"Checking special collection '{special['collection_names']}' from {start_date} to {end_date}")
+        
         if start_date <= current_date <= end_date:
             special_collections.extend(special['collection_names'])
-    
+            logging.info(f"Adding special collection(s): {special['collection_names']}")
+        else:
+            logging.info(f"Current date is outside the range for collection '{special['collection_names']}'.")
+
     return special_collections
 
 # Filter collections based on inclusion and exclusion
@@ -104,13 +109,16 @@ def filter_collections(config, all_collections, special_collections):
 
     collections_to_pin = []
 
-    # Filter by special collections first
-    for special_collection in special_collections:
+    # First, ensure we only consider special collections that are valid for pinning
+    valid_special_collections = get_special_collections(config)
+
+    # Filter by valid special collections first
+    for special_collection in valid_special_collections:
         matched_collections = [c for c in all_collections if c.title == special_collection]
         collections_to_pin.extend(matched_collections)
 
-    # Remove special collections from available collections to avoid duplicates
-    available_collections = [c for c in all_collections if c.title not in special_collections]
+    # Remove pinned special collections from available collections to avoid duplicates
+    available_collections = [c for c in all_collections if c.title not in valid_special_collections]
 
     # If using inclusion list
     if use_inclusion_list:
