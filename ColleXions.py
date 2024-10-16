@@ -7,8 +7,16 @@ import sys
 from plexapi.server import PlexServer
 from datetime import datetime
 
+# Define log file path
+LOG_DIR = 'logs'
+LOG_FILE = os.path.join(LOG_DIR, 'collexions.log')
+
+# Ensure the logs directory exists
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+    logging.info(f"Created log directory: {LOG_DIR}")
+
 # Configure logging to file with UTF-8 encoding for console output
-LOG_FILE = 'logs/collexions.log'
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -130,11 +138,10 @@ def filter_collections(config, all_collections, special_collections):
         available_collections = [c for c in available_collections if c.title not in exclusion_list]
 
     # Select additional collections if there are slots left to pin
-    if len(collections_to_pin) < config['number_of_collections_to_pin']:
-        remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
-        if available_collections:
-            additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
-            collections_to_pin.extend(additional_collections)
+    remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
+    if remaining_slots > 0 and available_collections:
+        additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
+        collections_to_pin.extend(additional_collections)
 
     return collections_to_pin
 
@@ -149,16 +156,13 @@ def main():
         # Step 1: Unpin currently pinned collections
         unpin_collections(plex, library_names, exclusion_list)
 
-        # Step 2: Get special collections based on current date
-        special_collections = get_special_collections(config)
-
-        # Step 3: Get all collections from the libraries
+        # Step 2: Get all collections from the libraries
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
-        # Step 4: Filter collections based on special collections, inclusion, and exclusion
-        collections_to_pin = filter_collections(config, all_collections, special_collections)
+        # Step 3: Filter collections based on special collections, inclusion, and exclusion
+        collections_to_pin = filter_collections(config, all_collections, exclusion_list)
 
-        # Step 5: Pin the collections
+        # Step 4: Pin the collections
         if collections_to_pin:
             pin_collections(collections_to_pin)
         else:
