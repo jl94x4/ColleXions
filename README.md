@@ -47,7 +47,7 @@ Download the ```config.json``` and edit to your liking
 
 ```docker run -it -v /path/to/config.json:/app/config.json docker.io/jl94x4/collexions```
 
-## Config Notez
+## Config Notes
 
 **Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
 
