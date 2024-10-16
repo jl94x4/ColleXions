@@ -8,12 +8,12 @@ from plexapi.server import PlexServer
 from datetime import datetime
 
 # Configure logging to file with UTF-8 encoding for console output
-LOG_FILE = 'collections.log'
+LOG_FILE = 'collexions.log'
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),  # Use UTF-8 encoding for log file
+        logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8'),  # Overwrites the log file
         logging.StreamHandler(sys.stdout)  # Use standard output for console
     ]
 )
@@ -96,11 +96,10 @@ def get_special_collections(config):
     
     return special_collections
 
-# Filter collections based on inclusion, exclusion, special dates, and labels
+# Filter collections based on inclusion and exclusion
 def filter_collections(config, all_collections, special_collections):
     inclusion_list = config.get('include_list', [])
     exclusion_list = config.get('exclusion_list', [])
-    label_exclusion_list = config.get('label_exclusion_list', [])
     use_inclusion_list = config.get('use_inclusion_list', False)
 
     collections_to_pin = []
@@ -121,12 +120,6 @@ def filter_collections(config, all_collections, special_collections):
         # Exclude based on exclusion list
         logging.info(f"Using exclusion list: {exclusion_list}")
         available_collections = [c for c in available_collections if c.title not in exclusion_list]
-    
-    # Exclude collections based on labels
-    logging.info(f"Excluding collections with labels: {label_exclusion_list}")
-    available_collections = [
-        c for c in available_collections if not any(label.tag in label_exclusion_list for label in c.labels)
-    ]
 
     # Select additional collections if there are slots left to pin
     if len(collections_to_pin) < config['number_of_collections_to_pin']:
@@ -154,7 +147,7 @@ def main():
         # Step 3: Get all collections from the libraries
         all_collections = get_collections_from_all_libraries(plex, library_names)
 
-        # Step 4: Filter collections based on special collections, inclusion, exclusion, and labels
+        # Step 4: Filter collections based on special collections, inclusion, and exclusion
         collections_to_pin = filter_collections(config, all_collections, special_collections)
 
         # Step 5: Pin the collections
