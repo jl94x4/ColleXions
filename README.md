@@ -68,6 +68,10 @@ Then run ```docker-compose up -d```
 
 **Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
 
+## Logging
+
+After every run collexions.log will be created with a full log of the last successful run. It will be overwritten on each new run.
+
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
 
