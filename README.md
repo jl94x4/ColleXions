@@ -47,7 +47,10 @@ Download the ```config.json``` and edit to your liking
 
 https://github.com/jl94x4/ColleXions/blob/main/config.json
 
-```docker run -it --name collexions -v /path/to/config.json:/app/config.json docker.io/jl94x4/collexions```
+```docker run -it --name ColleXions \
+  -v /path/to/ColleXions/config.json:/app/config.json \
+  -v /path/to/ColleXions/logs:/app/collexions.log \
+  docker.io/jl94x4/collexions```
 
 ## Docker Compose
 
@@ -59,6 +62,7 @@ services:
     container_name: collexions
     volumes:
       - /path/to/config.json:/app/config.json
+      - /path/to/ColleXions/logs:/app/collexions.log
     restart: unless-stopped
 ```
 
@@ -70,7 +74,7 @@ Then run ```docker-compose up -d```
 
 ## Logging
 
-After every run collexions.log will be created with a full log of the last successful run. It will be overwritten on each new run.
+After every run ```collexions.log``` will be created with a full log of the last successful run. It will be overwritten on each new run.
 
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
