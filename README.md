@@ -50,7 +50,7 @@ https://github.com/jl94x4/ColleXions/blob/main/config.json
 ```
 docker run -it --name ColleXions \
   -v /mnt/nvme/plexified/services/ColleXions/config.json:/app/config.json \
-  -v /mnt/nvme/plexified/services/ColleXions/logs:/app/collexions.log \
+  -v /mnt/nvme/plexified/services/ColleXions/logs:/app/logs \
   docker.io/jl94x4/collexions
 ```
 
@@ -64,7 +64,7 @@ services:
     container_name: collexions
     volumes:
       - /path/to/config.json:/app/config.json
-      - /path/to/ColleXions/logs:/app/collexions.log
+      - /path/to/ColleXions/logs:/app/logs
     restart: unless-stopped
 ```
 
