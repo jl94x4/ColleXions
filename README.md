@@ -74,6 +74,16 @@ Then run ```docker-compose up -d```
 
 **Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
 
+## Discord Webhooks
+
+ColleXions now includes a Discord Webhook Integration feature. This enhancement enables real-time notifications directly to your designated Discord channel whenever a collection is pinned to the Home and Friends' Home screens.
+
+**Configuration:** Include your Discord webhook URL in the ```config.json``` file.
+
+**Notifications:** Every time a collection is successfully pinned, the tool sends a formatted message to the specified Discord channel, highlighting the collection name in bold.
+
+This feature helps you keep track of which collections are being pinned, allowing for easy monitoring and tweaks to ensure diversity and relevance.
+
 ## Logging
 
 After every run ```collexions.log``` will be created with a full log of the last successful run. It will be overwritten on each new run.
