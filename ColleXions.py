@@ -68,8 +68,9 @@ def pin_collections(collections, config):
             hub.promoteShared()
             message = f"INFO - Collection '**{collection.title}**' pinned successfully to Home and Friends' Home screens."
             logging.info(message)
-            # Send a message to the Discord webhook
-            send_discord_message(config['discord_webhook_url'], message)
+            # Send a message to the Discord webhook if URL is provided
+            if 'discord_webhook_url' in config and config['discord_webhook_url']:
+                send_discord_message(config['discord_webhook_url'], message)
         except Exception as e:
             logging.error(f"Unexpected error while pinning collection: {collection.title}. Error: {str(e)}")
 
