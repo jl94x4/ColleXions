@@ -41,5 +41,6 @@
                 "Chick Flicks"
             ]
         }
-    ]
+    ],
+    "discord_webhook_url": "https://discord.com/api/webhooks/your_webhook_url"
 }
