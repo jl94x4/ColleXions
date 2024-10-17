@@ -4,6 +4,7 @@ import time
 import json
 import os
 import sys
+import requests
 from plexapi.server import PlexServer
 from datetime import datetime
 
@@ -58,16 +59,30 @@ def get_collections_from_all_libraries(plex, library_names):
     return all_collections
 
 # Pin the selected collections to Home and Friends' Home screens
-def pin_collections(collections):
+def pin_collections(collections, config):
     for collection in collections:
         try:
             logging.info(f"Attempting to pin collection: {collection.title}")
             hub = collection.visibility()
             hub.promoteHome()
             hub.promoteShared()
-            logging.info(f"Collection '{collection.title}' pinned successfully to Home and Friends' Home screens.")
+            message = f"INFO - Collection '**{collection.title}**' pinned successfully to Home and Friends' Home screens."
+            logging.info(message)
+            # Send a message to the Discord webhook
+            send_discord_message(config['discord_webhook_url'], message)
         except Exception as e:
             logging.error(f"Unexpected error while pinning collection: {collection.title}. Error: {str(e)}")
+
+# Send a message to the Discord webhook
+def send_discord_message(webhook_url, message):
+    data = {
+        "content": message
+    }
+    response = requests.post(webhook_url, json=data)
+    if response.status_code == 204:
+        logging.info(f"Message sent to Discord: {message}")
+    else:
+        logging.error(f"Failed to send message to Discord. Status code: {response.status_code}, response: {response.text}")
 
 # Unpin the currently pinned collections, honoring exclusions
 def unpin_collections(plex, library_names, exclusion_list):
@@ -140,7 +155,7 @@ def main():
         collections_to_pin = filter_collections(config, all_collections, special_collections)
         # Step 5: Pin the collections
         if collections_to_pin:
-            pin_collections(collections_to_pin)
+            pin_collections(collections_to_pin, config)
         else:
             logging.info("No collections available to pin.")
         logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval'] / 60} minutes.")
