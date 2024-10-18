@@ -107,8 +107,15 @@ def get_special_collections(config):
     for special in config.get('special_collections', []):
         start_date = datetime.strptime(special['start_date'], '%Y-%m-%d').date()
         end_date = datetime.strptime(special['end_date'], '%Y-%m-%d').date()
+        logging.info(f"Special collection: {special['collection_names']} start: {start_date} end: {end_date}")
+        
+        # Only include collections if they are within the date range
         if start_date <= current_date <= end_date:
+            logging.info(f"Special collection '{special['collection_names']}' is active.")
             special_collections.extend(special['collection_names'])
+        else:
+            logging.info(f"Special collection '{special['collection_names']}' is not active.")
+    
     return special_collections
 
 # Filter collections based on inclusion and exclusion
@@ -117,12 +124,18 @@ def filter_collections(config, all_collections, special_collections):
     exclusion_list = config.get('exclusion_list', [])
     use_inclusion_list = config.get('use_inclusion_list', False)
     collections_to_pin = []
-    # Filter by special collections first
+    
+    # Only pin special collections that are active (i.e., within their date range)
+    logging.info(f"Filtering collections with special collections: {special_collections}")
     for special_collection in special_collections:
         matched_collections = [c for c in all_collections if c.title == special_collection]
         collections_to_pin.extend(matched_collections)
+
+    logging.info(f"Collections to pin after adding special collections: {[c.title for c in collections_to_pin]}")
+
     # Remove special collections from available collections to avoid duplicates
     available_collections = [c for c in all_collections if c.title not in special_collections]
+    
     # If using inclusion list
     if use_inclusion_list:
         logging.info(f"Using inclusion list: {inclusion_list}")
@@ -131,12 +144,15 @@ def filter_collections(config, all_collections, special_collections):
         # Exclude based on exclusion list
         logging.info(f"Using exclusion list: {exclusion_list}")
         available_collections = [c for c in available_collections if c.title not in exclusion_list]
+    
     # Select additional collections if there are slots left to pin
     if len(collections_to_pin) < config['number_of_collections_to_pin']:
         remaining_slots = config['number_of_collections_to_pin'] - len(collections_to_pin)
         if available_collections:
             additional_collections = random.sample(available_collections, min(remaining_slots, len(available_collections)))
             collections_to_pin.extend(additional_collections)
+    
+    logging.info(f"Final collections to pin: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
 
 # Main loop to randomly select and pin collections
