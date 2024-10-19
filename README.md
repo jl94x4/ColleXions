@@ -72,7 +72,7 @@ Then run ```docker-compose up -d```
 
 ## Config Notes
 
-**Pinning interval is in seconds, not minutes! In my example the field is set to 21600 which is 6 hours**
+**Pinning interval is now in minutes, not seconds! In my example the field is set to 60 which is 1 hour**
 
 ## Discord Webhooks
 
