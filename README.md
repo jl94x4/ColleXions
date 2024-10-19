@@ -70,8 +70,6 @@ services:
 
 Then run ```docker-compose up -d```
 
-## Config Notes
-
 ## Starting With Version 1.09
 - **Pinning interval is now in minutes, not seconds! In my example the field is set to 60 which is 1 hour**
 
