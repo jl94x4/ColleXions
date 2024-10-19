@@ -73,7 +73,7 @@ Then run ```docker-compose up -d```
 ## Starting With Version 1.09
 - **Pinning interval is now in minutes, not seconds! In my example the field is set to 60 which is 1 hour**
 
-## Discord Webhooks
+## Discord Webhooks (optional)
 
 ColleXions now includes a Discord Webhook Integration feature. This enhancement enables real-time notifications directly to your designated Discord channel whenever a collection is pinned to the Home and Friends' Home screens.
 
