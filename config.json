@@ -14,7 +14,7 @@
         "Collection 3", 
         "Collection 4"
     ],
-    "pinning_interval": 21600,
+    "pinning_interval": 60,
     "number_of_collections_to_pin": 3,
     "special_collections": [
         {
