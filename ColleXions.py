@@ -22,8 +22,8 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8'),  # Overwrites the log file
-        logging.StreamHandler(sys.stdout)  # Use standard output for console
+        logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8'),
+        logging.StreamHandler(sys.stdout)
     ]
 )
 
@@ -161,6 +161,7 @@ def main():
     plex = connect_to_plex(config)
     exclusion_list = config.get('exclusion_list', [])
     library_names = config.get('library_names', ['Movies'])
+    pinning_interval_seconds = config['pinning_interval'] * 60  # Convert from minutes to seconds
     while True:
         # Step 1: Unpin currently pinned collections
         unpin_collections(plex, library_names, exclusion_list)
@@ -175,8 +176,8 @@ def main():
             pin_collections(collections_to_pin, config)
         else:
             logging.info("No collections available to pin.")
-        logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval'] / 60} minutes.")
-        time.sleep(config['pinning_interval'])
+        logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval']} minutes.")
+        time.sleep(pinning_interval_seconds)
 
 if __name__ == "__main__":
     main()
