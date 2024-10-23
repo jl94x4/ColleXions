@@ -45,8 +45,7 @@ Update the ```config.json``` file with your Plex URL, token, library names, and 
 Run ```python3 ColleXions.py```
 
 
-## Starting With Version 1.09
-- **Pinning interval is now in minutes, not seconds! In my example the field is set to 60 which is 1 hour**
+- **Pinning interval is in minutes, not seconds!**
 
 ## Discord Webhooks (optional)
 
