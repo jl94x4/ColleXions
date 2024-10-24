@@ -6,7 +6,7 @@ import os
 import sys
 import requests
 from plexapi.server import PlexServer
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Define log file path
 LOG_DIR = 'logs'
@@ -29,6 +29,43 @@ logging.basicConfig(
 
 # Configuration file path
 CONFIG_FILE = 'config.json'
+
+# File to store the selected collections per day
+SELECTED_COLLECTIONS_FILE = 'selected_collections.json'
+
+# Load the selected collections and clean up old entries (older than 3 days)
+def load_selected_collections():
+    if os.path.exists(SELECTED_COLLECTIONS_FILE):
+        with open(SELECTED_COLLECTIONS_FILE, 'r', encoding='utf-8') as f:
+            selected_collections = json.load(f)
+    else:
+        selected_collections = {}
+
+    # Clean up entries older than 3 days
+    current_date = datetime.now().date()
+    week_ago_date = current_date - timedelta(days=3)
+
+    selected_collections = {
+        day: collections for day, collections in selected_collections.items()
+        if datetime.strptime(day, '%Y-%m-%d').date() >= week_ago_date
+    }
+
+    return selected_collections
+
+# Save the selected collections including entries from the past 3 days
+def save_selected_collections(selected_collections):
+    # Clean up old entries (older than 3 days) before saving
+    current_date = datetime.now().date()
+    week_ago_date = current_date - timedelta(days=3)
+
+    selected_collections = {
+        day: collections for day, collections in selected_collections.items()
+        if datetime.strptime(day, '%Y-%m-%d').date() >= week_ago_date
+    }
+
+    # Save the updated collections to the file
+    with open(SELECTED_COLLECTIONS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(selected_collections, f, ensure_ascii=False, indent=4)
 
 # Load configuration from the JSON file with UTF-8 encoding
 def load_config():
@@ -138,8 +175,7 @@ def get_non_active_special_collections(config):
     
     return non_active_special_collections
 
-# Optimize filtering collections with a single pass for inclusion, exclusion, and category matching
-def filter_collections(config, all_collections, special_collections, collection_limit, library_name):
+def filter_collections(config, all_collections, special_collections, collection_limit, library_name, selected_collections_today):
     categories = config.get('categories', {}).get(library_name, {})
     inclusion_set = set(config.get('include_list', []))
     exclusion_set = set(config.get('exclusion_list', []))
@@ -162,8 +198,13 @@ def filter_collections(config, all_collections, special_collections, collection_
     # Reduce the number of checks by combining the inclusion/exclusion filtering in one loop
     categorized_collections = {category: [] for category in categories}
     for collection in available_collections:
+        # Skip already selected collections for the day
+        if collection.title in selected_collections_today:
+            continue
+        
         if (use_inclusion_list and collection.title not in inclusion_set) or (collection.title in exclusion_set):
             continue
+        
         for category, collection_names in categories.items():
             if collection.title in collection_names:
                 categorized_collections[category].append(collection)
@@ -182,13 +223,20 @@ def filter_collections(config, all_collections, special_collections, collection_
 
 
 
-# Main loop to randomly select and pin collections
 def main():
     config = load_config()
     plex = connect_to_plex(config)
     exclusion_list = config.get('exclusion_list', [])
     library_names = config.get('library_names', ['Movies', 'TV Shows'])
     pinning_interval_seconds = config['pinning_interval'] * 60  # Convert from minutes to seconds
+
+    # Load already selected collections, cleaning up entries older than 3 days
+    selected_collections = load_selected_collections()
+
+    # Get current day and initialize selected collections for today
+    current_day = datetime.now().strftime('%Y-%m-%d')
+    if current_day not in selected_collections:
+        selected_collections[current_day] = []
 
     while True:
         for library_name in library_names:
@@ -206,16 +254,20 @@ def main():
             all_collections = get_collections_from_all_libraries(plex, [library_name])
             
             # Step 4: Filter collections based on special collections and inclusion/exclusion
-            collections_to_pin = filter_collections(config, all_collections, active_special_collections, collections_to_pin_for_library, library_name)
+            collections_to_pin = filter_collections(config, all_collections, active_special_collections, collections_to_pin_for_library, library_name, selected_collections[current_day])
             
             # Step 5: Pin the collections
             if collections_to_pin:
                 pin_collections(collections_to_pin, config)
+                # Add newly selected collections to today's list
+                selected_collections[current_day].extend([c.title for c in collections_to_pin])
+                # Save selected collections while keeping the past week's data
+                save_selected_collections(selected_collections)
             else:
                 logging.info(f"No collections available to pin for library: {library_name}.")
 
         logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval']} minutes.")
-        time.sleep(pinning_interval_seconds)
+        exit()
 
 if __name__ == "__main__":
     main()
