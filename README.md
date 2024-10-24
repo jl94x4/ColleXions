@@ -15,6 +15,8 @@ This is a fork of jl94x4's excellent work
 
 - **Categorize Collections:** Users can put collections into categories to ensure a variety of collection are chosen if some are too similar
 
+- **Collection History:** Collections are remembered so they don't get chosen too often
+
 ## Include & Exclude Collections
 
 - **Exclude Collections:** The exclusion list allows you to specify collections that should never be pinned. These collections are "blacklisted," meaning that even if they are randomly selected or included in the special collections, they will be skipped, any collections you have manually pinned that are in this list will not be unpinned either.
