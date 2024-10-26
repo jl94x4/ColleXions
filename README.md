@@ -46,6 +46,34 @@ Update the ```config.json``` file with your Plex URL, token, library names, and 
 
 Run ```python3 ColleXions.py```
 
+## Docker Run
+
+Download the ```config.json``` and edit to your liking
+
+https://github.com/jl94x4/ColleXions/blob/main/config.json
+
+```
+docker run -it --name ColleXions \
+  -v /path/to/collexions/config.json:/app/config.json \
+  -v /path/to/collexions/logs:/app/logs \
+  docker.io/jl94x4/collexions
+```
+
+## Docker Compose
+
+```version: '3.8'
+
+services:
+  collexions:
+    image: jl94x4/collexions
+    container_name: collexions
+    volumes:
+      - /path/to/collexions/config.json:/app/config.json
+      - /path/to/collexions/logs:/app/logs
+    restart: unless-stopped
+```
+
+Then run ```docker-compose up -d```
 
 - **Pinning interval is in minutes, not seconds!**
 
