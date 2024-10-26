@@ -1,5 +1,6 @@
 # ColleXions
 ColleXions automates the process of pinning collections to your Plex home screen, making it easier to showcase your favorite content. With customizable features, it enhances your Plex experience by dynamically adjusting what is displayed, randomly.
+This is a fork of jl94x4's excellent work
 
 ## Key Features
 - **Randomized Pinning:** ColleXions randomly selects collections to pin each cycle, ensuring that your home screen remains fresh and engaging. This randomness prevents the monotony of static collections, allowing users to discover new content easily.
@@ -11,6 +12,10 @@ ColleXions automates the process of pinning collections to your Plex home screen
 - **Inclusion List:** Users can specify collections to include from pinning, ensuring full control over the collections you see on your home screen.
 
 - **Customizable Settings:** Users can easily adjust library names, pinning intervals, and the number of collections to pin, tailoring the experience to their preferences.
+
+- **Categorize Collections:** Users can put collections into categories to ensure a variety of collection are chosen if some are too similar
+
+- **Collection History:** Collections are remembered so they don't get chosen too often
 
 ## Include & Exclude Collections
 
@@ -41,37 +46,8 @@ Update the ```config.json``` file with your Plex URL, token, library names, and 
 
 Run ```python3 ColleXions.py```
 
-## Docker Run
 
-Download the ```config.json``` and edit to your liking
-
-https://github.com/jl94x4/ColleXions/blob/main/config.json
-
-```
-docker run -it --name ColleXions \
-  -v /path/to/collexions/config.json:/app/config.json \
-  -v /path/to/collexions/logs:/app/logs \
-  docker.io/jl94x4/collexions
-```
-
-## Docker Compose
-
-```version: '3.8'
-
-services:
-  collexions:
-    image: jl94x4/collexions
-    container_name: collexions
-    volumes:
-      - /path/to/collexions/config.json:/app/config.json
-      - /path/to/collexions/logs:/app/logs
-    restart: unless-stopped
-```
-
-Then run ```docker-compose up -d```
-
-## Starting With Version 1.09
-- **Pinning interval is now in minutes, not seconds! In my example the field is set to 60 which is 1 hour**
+- **Pinning interval is in minutes, not seconds!**
 
 ## Discord Webhooks (optional)
 
@@ -89,6 +65,7 @@ After every run ```collexions.log``` will be created with a full log of the last
 
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
+Thanks to jl94x4 for the work they've done on this
 
 ## License
 This project is licensed under the MIT License.

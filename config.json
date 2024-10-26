@@ -1,46 +1,69 @@
 {
-    "plex_url": "http://local-url:32400",
-    "plex_token": "your-plex-token",
+    "plex_url": "plex-ip:32400",
+    "plex_token": "plex-token",
     "library_names": [
         "Movies", 
         "TV Shows"
     ],
     "exclusion_list": [
-        "Collection 1", 
-        "Collection 2"
+        "Exclusion 1",
+        "Exclusion 2"
     ],
-    "use_inclusion_list": false,
+    "use_inclusion_list": true,
     "include_list": [
-        "Collection 3", 
-        "Collection 4"
+        "Inclusion 1",
+        "Inclusion 2",
+        "Inclusion 3",
+        "Inclusion 4",
+        "Inclusion 5",
+        "Inclusion 6",
+        "Inclusion 7",
+        "Inlcusion 8"
     ],
-    "pinning_interval": 60,
-    "number_of_collections_to_pin": 3,
+    "pinning_interval": 180,
+    "number_of_collections_to_pin": {
+        "Movies": 4,
+        "TV Shows": 3
+    },
+    "categories": {
+        "Movies": {
+            "Category 1": [
+                "Inclusion 1",
+                "Inclusion 2"
+            ],
+            "Category 2": [
+                "Inclusion 3",
+                "Inclusion 4" 
+            ]
+        },
+        "TV Shows": {
+            "Category 3": [
+                "Inclusion 5", 
+                "Inclusion 6"
+            ],
+            "Category 4": [
+                "Inclusion 7",
+                "Inclusion 8"
+            ]
+
+            ]  
+        }
+    },
     "special_collections": [
         {
-            "start_date": "2024-10-01",
-            "end_date": "2024-10-31",
+            "start_date": "10-01",
+            "end_date": "10-31",
             "collection_names": [
-                "Halloween Movies", 
-                "Horror Movies"
+                "Halloween Movies" 
             ]
         },
         {
-            "start_date": "2024-12-01",
-            "end_date": "2024-12-27",
+            "start_date": "12-26",
+            "end_date": "01-03",
             "collection_names": [
-                "Christmas Classics", 
-                "Holiday Specials"
-            ]
-        },
-        {
-            "start_date": "2024-02-14",
-            "end_date": "2024-02-15",
-            "collection_names": [
-                "Valentines Day", 
-                "Chick Flicks"
+                "New Year's Day Movies" 
             ]
         }
-    ],
-    "discord_webhook_url": "https://discord.com/api/webhooks/your_webhook_url"
+
+    ]
 }
