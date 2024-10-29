@@ -272,7 +272,7 @@ def main():
                 logging.info(f"No collections available to pin for library: {library_name}.")
 
         logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval']} minutes.")
-        exit()
+        time.sleep(pinning_interval_seconds)
 
 if __name__ == "__main__":
     main()
