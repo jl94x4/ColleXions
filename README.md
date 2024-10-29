@@ -93,7 +93,7 @@ After every run ```collexions.log``` will be created with a full log of the last
 
 ## Acknowledgments
 Thanks to the PlexAPI library and the open-source community for their support.
-Thanks to jl94x4 for the work they've done on this
+Thanks to defluophoenix for the additional work they've done on this
 
 ## License
 This project is licensed under the MIT License.
