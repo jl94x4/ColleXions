@@ -34,7 +34,7 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 ## Special Collections Enforcement
 
 - Special collections will only be pinned during their active dates. If a special collection is found outside its defined date range, it will be skipped.
-This ensures that users can't pin special collections out of season (e.g., Halloween movies in December).
+This ensures that ColleXions can't pin special collections out of season (e.g., Halloween movies in December).
 
 
 ## Installation
