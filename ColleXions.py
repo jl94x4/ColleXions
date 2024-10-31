@@ -219,6 +219,8 @@ def filter_collections(config, all_collections, special_collections, collection_
             logging.info(f"Selected collection '{selected_collection.title}' from category '{category}'")
     
     logging.info(f"Final collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
+    # Trim the collections to match the exact count specified
+    collections_to_pin = collections_to_pin[:collection_limit]
     return collections_to_pin
 
 
