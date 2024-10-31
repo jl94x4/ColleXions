@@ -219,9 +219,23 @@ def filter_collections(config, all_collections, special_collections, collection_
             logging.info(f"Selected collection '{selected_collection.title}' from category '{category}'")
     
     logging.info(f"Final collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
-    logging.info(f"Filtered collections count before pinning: {len(collections_to_pin)}")
-    collections_to_pin = collections_to_pin[:collection_limit]
-    logging.info(f"Collections count after enforcing limit ({collection_limit}): {len(collections_to_pin)}")
+    # Step 1: Calculate active special collections
+    current_month_day = (datetime.now().month, datetime.now().day)
+    active_special_collections = []
+    for collection in config['special_collections']:
+        start_date = datetime.strptime(collection['start_date'], '%m-%d').date().replace(year=datetime.now().year)
+        end_date = datetime.strptime(collection['end_date'], '%m-%d').date().replace(year=datetime.now().year)
+        if start_date <= datetime.now().date() <= end_date:
+            active_special_collections.extend(collection['collection_names'])
+    logging.info(f"Active special collections: {active_special_collections}")
+    all_eligible_collections = [c for c in all_collections if c.title not in exclusion_set]
+    random.shuffle(all_eligible_collections)
+    collections_to_pin = [c for c in all_eligible_collections if c.title in active_special_collections]
+    remaining_slots = collection_limit - len(collections_to_pin)
+    if remaining_slots > 0:
+        regular_collections = [c for c in all_eligible_collections if c not in collections_to_pin]
+        collections_to_pin.extend(regular_collections[:remaining_slots])
+    logging.info(f"Final randomized collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
 
 
