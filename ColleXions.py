@@ -28,10 +28,10 @@ logging.basicConfig(
 )
 
 # Configuration file path
-CONFIG_FILE = 'config.json'
+CONFIG_FILE = '/root/collexions/config.json'
 
 # File to store the selected collections per day
-SELECTED_COLLECTIONS_FILE = 'selected_collections.json'
+SELECTED_COLLECTIONS_FILE = '/root/collexions/selected_collections.json'
 
 # Load the selected collections and clean up old entries (older than 3 days)
 def load_selected_collections():
@@ -218,29 +218,18 @@ def filter_collections(config, all_collections, special_collections, collection_
             collections_to_pin.append(selected_collection)
             logging.info(f"Selected collection '{selected_collection.title}' from category '{category}'")
     
+    # If the collections to pin are still fewer than the limit, pick random collections
+    while len(collections_to_pin) < collection_limit:
+        remaining_collections = [c for c in available_collections if c not in collections_to_pin]
+        if not remaining_collections:
+            break  # No more collections to add
+        random_collection = random.choice(remaining_collections)
+        collections_to_pin.append(random_collection)
+        logging.info(f"Selected random collection '{random_collection.title}' to meet pinning limit")
+
     logging.info(f"Final collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
-    today = datetime.now().date()
-    active_special_collections = []
-    for collection in config['special_collections']:
-        start_date = datetime.strptime(collection['start_date'], '%m-%d').date().replace(year=today.year)
-        end_date = datetime.strptime(collection['end_date'], '%m-%d').date().replace(year=today.year)
-        if start_date <= today <= end_date:
-            active_special_collections.extend(collection['collection_names'])
-    collections_to_pin = [c for c in all_collections if c.title in active_special_collections]
-    remaining_slots = collection_limit - len(collections_to_pin)
-    if remaining_slots > 0:
-        category_collections = []
-        for category in config.get('categories', []):
-            category_collections.extend([c for c in all_collections if c.title == category])
-        category_collections = category_collections[:remaining_slots]
-        collections_to_pin.extend(category_collections)
-        remaining_slots -= len(category_collections)
-        if remaining_slots > 0:
-            eligible_regular_collections = [c for c in all_collections if c.title not in exclusion_set and c not in collections_to_pin]
-            random.shuffle(eligible_regular_collections)
-            collections_to_pin.extend(eligible_regular_collections[:remaining_slots])
-    logging.info(f"Final prioritized collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
+
 
 
 
