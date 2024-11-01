@@ -139,6 +139,17 @@ def unpin_collections(plex, library_names, exclusion_list):
 # Check for special scheduled collections that are within the active date range
 def get_active_special_collections(config):
 
+    current_date = datetime.now().date()  # Initialize current_date to today's date
+
+    for special in config.get('special_collections', []):
+        for collection in special['collection_names']:
+            start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year).date()
+            end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year).date()
+            if start_date <= current_date <= end_date:
+                valid_special_collections.append(collection)
+                break
+
+
     import pytz  # Add timezone support
     tz = pytz.timezone("UTC")  # Set the timezone to UTC, or update this to the user's specific timezone if needed
     current_date = datetime.now(tz).date()  # Ensure current_date reflects timezone
