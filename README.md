@@ -33,11 +33,13 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 ## Collection Priority Enforcement
 
-- Special collections will be prioritised and selected first
-- If any collection spaces as determined by config.json are available, categories will take the next priority
-- Only if any collection spaces remain after both special collections & categories have been selected, random collections for each library will fill the remaining slots
+The ColleXions tool organizes pinned collections based on a defined priority system to ensure important or seasonal collections are featured prominently:
 
-If there are no special collections, and you don't have categories defined, all slots will be taken by random collections.
+- **Special Collections First:** Collections marked as special (e.g., seasonal or themed collections) are prioritized and pinned first, these typically are collections that have a start and an end date.
+- **Category-Based Collections:** After special collections are pinned, ColleXions will then fill any remaining slots with collections from specified categories, if defined in the config.
+- **Random Selections:** If there are still available slots after both special and category-based collections have been selected, random collections from each library are pinned to fill the remaining spaces.
+
+If no special collections or categories are defined, ColleXions will automatically fill all slots with random collections, ensuring your library's home screen remains populated with the amounts specified in your config.
 
 
 ## Installation
