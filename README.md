@@ -31,10 +31,17 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 - If the inclusion list is turned off or not defined (use_inclusion_list is set to False or missing), the exclusion list will still be honored, ensuring that any collections in the exclusion list are never pinned.
 
-## Special Collections Enforcement
+## Collection Priority Enforcement
 
-- Special collections will only be pinned during their active dates. If a special collection is found outside its defined date range, it will be skipped.
-This ensures that ColleXions can't pin special collections out of season (e.g., Halloween movies in December).
+The ColleXions tool organizes pinned collections based on a defined priority system to ensure important or seasonal collections are featured prominently:
+
+- **Special Collections First:** Collections marked as special (e.g., seasonal or themed collections) are prioritized and pinned first, these typically are collections that have a start and an end date.
+
+- **Category-Based Collections:** After special collections are pinned, ColleXions will then fill any remaining slots with collections from specified categories, if defined in the config.
+
+- **Random Selections:** If there are still available slots after both special and category-based collections have been selected, random collections from each library are pinned to fill the remaining spaces.
+
+If no special collections or categories are defined, ColleXions will automatically fill all slots with random collections, ensuring your library's home screen remains populated with the amounts specified in your config.
 
 
 ## Installation
