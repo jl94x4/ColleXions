@@ -138,9 +138,23 @@ def unpin_collections(plex, library_names, exclusion_list):
 
 # Check for special scheduled collections that are within the active date range
 def get_active_special_collections(config):
-    current_date = datetime.now().date()
+    # Convert current_date to datetime at midnight for consistent comparison
+    current_date = datetime.combine(datetime.now().date(), datetime.min.time())
     active_special_collections = []
     logging.info(f"Checking for special collections on date: {current_date}")
+
+    for special in config.get('special_collections', []):
+        start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
+        end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year)
+
+        # Check if the current date falls within the specified date range
+        if start_date <= current_date <= end_date:
+            logging.info(f"Special collection '{special['collection_names']}' is active.")
+            active_special_collections.extend(special['collection_names'])
+        else:
+            logging.info(f"Special collection '{special['collection_names']}' is not active.")
+
+    return active_special_collections
     
     for special in config.get('special_collections', []):
         start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
@@ -164,7 +178,7 @@ def filter_collections(config, all_collections, active_special_collections, coll
 
     # Step 1: Pin active special collections within date range
     for special_collection in active_special_collections:
-        matched_collections = [c for c in all_collections if c.title == special_collection]
+        matched_collections = [c for c in all_collections if c.title == special_collection and c.title not in exclusion_set]
         collections_to_pin.extend(matched_collections)
 
     # Step 2: If slots remain, add collections from configured categories
@@ -221,4 +235,15 @@ def main():
 
             # Pin the collections
             if collections_to_pin:
-                pin_collections(collections_to_pin, config
+                pin_collections(collections_to_pin, config)
+                selected_collections[current_day].extend([c.title for c in collections_to_pin])
+                save_selected_collections(selected_collections)
+            else:
+                logging.info(f"No collections available to pin for library: {library_name}.")
+
+        # Wait before the next scheduled pinning
+        logging.info(f"Scheduler set to change pinned collections every {config['pinning_interval']} minutes.")
+        time.sleep(pinning_interval_seconds)
+
+if __name__ == "__main__":
+    main()
