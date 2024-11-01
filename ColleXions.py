@@ -28,10 +28,10 @@ logging.basicConfig(
 )
 
 # Configuration file path
-CONFIG_FILE = '/root/collexions/config.json'
+CONFIG_FILE = 'config.json'
 
 # File to store the selected collections per day
-SELECTED_COLLECTIONS_FILE = '/root/collexions/selected_collections.json'
+SELECTED_COLLECTIONS_FILE = 'selected_collections.json'
 
 # Load the selected collections and clean up old entries (older than 3 days)
 def load_selected_collections():
