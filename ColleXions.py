@@ -33,7 +33,6 @@ CONFIG_FILE = 'config.json'
 # File to store the selected collections per day
 SELECTED_COLLECTIONS_FILE = 'selected_collections.json'
 
-# Load the selected collections and clean up old entries (older than 3 days)
 def load_selected_collections():
     if os.path.exists(SELECTED_COLLECTIONS_FILE):
         with open(SELECTED_COLLECTIONS_FILE, 'r', encoding='utf-8') as f:
@@ -41,7 +40,6 @@ def load_selected_collections():
     else:
         selected_collections = {}
 
-    # Clean up entries older than 3 days
     current_date = datetime.now().date()
     week_ago_date = current_date - timedelta(days=3)
 
@@ -52,9 +50,7 @@ def load_selected_collections():
 
     return selected_collections
 
-# Save the selected collections including entries from the past 3 days
 def save_selected_collections(selected_collections):
-    # Clean up old entries (older than 3 days) before saving
     current_date = datetime.now().date()
     week_ago_date = current_date - timedelta(days=3)
 
@@ -63,11 +59,9 @@ def save_selected_collections(selected_collections):
         if datetime.strptime(day, '%Y-%m-%d').date() >= week_ago_date
     }
 
-    # Save the updated collections to the file
     with open(SELECTED_COLLECTIONS_FILE, 'w', encoding='utf-8') as f:
         json.dump(selected_collections, f, ensure_ascii=False, indent=4)
 
-# Load configuration from the JSON file with UTF-8 encoding
 def load_config():
     if not os.path.exists(CONFIG_FILE):
         logging.error(f"Configuration file '{CONFIG_FILE}' not found.")
@@ -76,26 +70,20 @@ def load_config():
         config = json.load(f)
     return config
 
-# Initialize the Plex server connection
 def connect_to_plex(config):
     logging.info("Connecting to Plex server...")
     plex = PlexServer(config['plex_url'], config['plex_token'])
     logging.info("Connected to Plex server successfully.")
     return plex
 
-# Get current collections from all specified libraries
 def get_collections_from_all_libraries(plex, library_names):
     all_collections = []
     for library_name in library_names:
         library = plex.library.section(library_name)
         collections = library.collections()
         all_collections.extend(collections)
-    logging.info("Current collections from all libraries:")
-    for collection in all_collections:
-        logging.info(f"Collection: {collection.title}")
     return all_collections
 
-# Pin the selected collections to Home and Friends' Home screens
 def pin_collections(collections, config):
     for collection in collections:
         try:
@@ -103,32 +91,25 @@ def pin_collections(collections, config):
             hub = collection.visibility()
             hub.promoteHome()
             hub.promoteShared()
-            message = f"INFO - Collection '**{collection.title}**' pinned successfully to Home and Friends' Home screens."
+            message = f"INFO - Collection '**{collection.title}**' pinned successfully."
             logging.info(message)
-            # Send a message to the Discord webhook if URL is provided
             if 'discord_webhook_url' in config and config['discord_webhook_url']:
                 send_discord_message(config['discord_webhook_url'], message)
         except Exception as e:
-            logging.error(f"Unexpected error while pinning collection: {collection.title}. Error: {str(e)}")
+            logging.error(f"Error pinning collection: {collection.title}. Error: {str(e)}")
 
-# Send a message to the Discord webhook
 def send_discord_message(webhook_url, message):
-    data = {
-        "content": message
-    }
+    data = {"content": message}
     response = requests.post(webhook_url, json=data)
     if response.status_code == 204:
         logging.info(f"Message sent to Discord: {message}")
     else:
         logging.error(f"Failed to send message to Discord. Status code: {response.status_code}, response: {response.text}")
 
-# Unpin the currently pinned collections, honoring exclusions
 def unpin_collections(plex, library_names, exclusion_list):
-    logging.info("Unpinning currently pinned collections...")
     for library_name in library_names:
         for collection in plex.library.section(library_name).collections():
             if collection.title in exclusion_list:
-                logging.info(f"Skipping unpinning for collection: {collection.title} (in exclusion list)")
                 continue
             hub = collection.visibility()
             if hub._promoted:
@@ -136,113 +117,46 @@ def unpin_collections(plex, library_names, exclusion_list):
                 hub.demoteShared()
                 logging.info(f"Collection '{collection.title}' unpinned successfully.")
 
-# Check for special scheduled collections that are within the active date range
 def get_active_special_collections(config):
     current_date = datetime.now().date()
-    current_month_day = (current_date.month, current_date.day)
     active_special_collections = []
-    logging.info(f"Checking for special collections on date: {current_date}")
-    
     for special in config.get('special_collections', []):
-        start_date = datetime.strptime(special['start_date'], '%m-%d')
-        end_date = datetime.strptime(special['end_date'], '%m-%d')
-        start_month_day = (start_date.month, start_date.day)
-        end_month_day = (end_date.month, end_date.day)
-        
-        logging.info(f"Special collection: {special['collection_names']} start: {start_month_day} end: {end_month_day}")
-        
-        # Only include collections if they are within the date range (ignoring year)
-        if start_month_day <= current_month_day <= end_month_day:
-            logging.info(f"Special collection '{special['collection_names']}' is active.")
+        start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
+        end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year)
+        if start_date <= current_date <= end_date:
             active_special_collections.extend(special['collection_names'])
-        else:
-            logging.info(f"Special collection '{special['collection_names']}' is not active.")
-    
     return active_special_collections
-# Get special collections that should always be excluded from regular pinning when not active
-def get_non_active_special_collections(config):
-    current_date = datetime.now().date()
-    non_active_special_collections = []
-    logging.info(f"Checking for non-active special collections on date: {current_date}")
-    
-    for special in config.get('special_collections', []):
-        start_date = datetime.strptime(special['start_date'], '%m-%d').date()
-        end_date = datetime.strptime(special['end_date'], '%m-%d').date()
-        
-        if not (start_date <= current_date <= end_date):
-            non_active_special_collections.extend(special['collection_names'])
-            logging.info(f"Special collection '{special['collection_names']}' is not active and will be excluded.")
-    
-    return non_active_special_collections
 
-def filter_collections(config, all_collections, special_collections, collection_limit, library_name, selected_collections_last_week):
-    categories = config.get('categories', {}).get(library_name, {})
-    inclusion_set = set(config.get('include_list', []))
+def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name, selected_collections_last_week):
     exclusion_set = set(config.get('exclusion_list', []))
-    use_inclusion_list = config.get('use_inclusion_list', False)
     collections_to_pin = []
 
-    # Handle special collections (they should always be pinned)
-    logging.info(f"Filtering collections with special collections: {special_collections}")
-    special_collections_set = set(special_collections)
-    for special_collection in special_collections_set:
+    # Step 1: Pin active special collections
+    for special_collection in active_special_collections:
         matched_collections = [c for c in all_collections if c.title == special_collection]
         collections_to_pin.extend(matched_collections)
 
-    logging.info(f"Special collections pinned: {[c.title for c in collections_to_pin]}")
-
-    # Use sets for faster lookups
-    non_active_special_collections = get_non_active_special_collections(config)
-    available_collections = [c for c in all_collections if c.title not in non_active_special_collections]
-
-    # Reduce the number of checks by combining the inclusion/exclusion filtering in one loop
-    categorized_collections = {category: [] for category in categories}
-    for collection in available_collections:
-        # Skip collections that were selected in the past 7 days
-        if collection.title in selected_collections_last_week:
-            continue
-        
-        if (use_inclusion_list and collection.title not in inclusion_set) or (collection.title in exclusion_set):
-            continue
-        
-        for category, collection_names in categories.items():
-            if collection.title in collection_names:
-                categorized_collections[category].append(collection)
-
-    logging.info(f"Categorized collections for {library_name}: {categorized_collections}")
-
-    # Select one collection from each category, if available
-    for category, collections in categorized_collections.items():
-        if collections and len(collections_to_pin) < collection_limit:
-            selected_collection = random.choice(collections)
-            collections_to_pin.append(selected_collection)
-            logging.info(f"Selected collection '{selected_collection.title}' from category '{category}'")
-    
-    logging.info(f"Final collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
-    today = datetime.now().date()
-    active_special_collections = []
-    for collection in config['special_collections']:
-        start_date = datetime.strptime(collection['start_date'], '%m-%d').date().replace(year=today.year)
-        end_date = datetime.strptime(collection['end_date'], '%m-%d').date().replace(year=today.year)
-        if start_date <= today <= end_date:
-            active_special_collections.extend(collection['collection_names'])
-    collections_to_pin = [c for c in all_collections if c.title in active_special_collections]
+    # Step 2: Pin collections from defined categories if space remains
     remaining_slots = collection_limit - len(collections_to_pin)
+    categories = config.get('categories', {}).get(library_name, {})
     if remaining_slots > 0:
-        category_collections = []
-        for category in config.get('categories', []):
-            category_collections.extend([c for c in all_collections if c.title == category])
-        category_collections = category_collections[:remaining_slots]
-        collections_to_pin.extend(category_collections)
-        remaining_slots -= len(category_collections)
-        if remaining_slots > 0:
-            eligible_regular_collections = [c for c in all_collections if c.title not in exclusion_set and c not in collections_to_pin]
-            random.shuffle(eligible_regular_collections)
-            collections_to_pin.extend(eligible_regular_collections[:remaining_slots])
+        for category, collection_names in categories.items():
+            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in exclusion_set]
+            if category_collections:
+                selected_collection = random.choice(category_collections)
+                collections_to_pin.append(selected_collection)
+                remaining_slots -= 1
+                if remaining_slots == 0:
+                    break
+
+    # Step 3: Fill remaining slots with random collections if needed
+    available_collections = [c for c in all_collections if c.title not in exclusion_set and c.title not in active_special_collections]
+    if remaining_slots > 0:
+        random.shuffle(available_collections)
+        collections_to_pin.extend(available_collections[:remaining_slots])
+
     logging.info(f"Final prioritized collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
-
-
 
 def main():
     config = load_config()
@@ -251,43 +165,27 @@ def main():
     library_names = config.get('library_names', ['Movies', 'TV Shows'])
     pinning_interval_seconds = config['pinning_interval'] * 60  # Convert from minutes to seconds
 
-    # Load already selected collections, cleaning up entries older than 7 days
     selected_collections = load_selected_collections()
-
-    # Get current day and initialize selected collections for today
     current_day = datetime.now().strftime('%Y-%m-%d')
     if current_day not in selected_collections:
         selected_collections[current_day] = []
 
-    # Gather all collections selected in the past 7 days
     selected_collections_last_week = []
     for day, collections in selected_collections.items():
         selected_collections_last_week.extend(collections)
 
     while True:
         for library_name in library_names:
-            # Get the configured number of collections to pin for the current library
             collections_to_pin_for_library = config['number_of_collections_to_pin'].get(library_name, 0)
             
-            logging.info(f"Processing library: {library_name} with {collections_to_pin_for_library} collections to pin.")
-            
-            # Step 1: Unpin currently pinned collections
             unpin_collections(plex, [library_name], exclusion_list)
-            # Step 2: Get active special collections based on current date
             active_special_collections = get_active_special_collections(config)
-            
-            # Step 3: Get all collections from the current library
             all_collections = get_collections_from_all_libraries(plex, [library_name])
-            
-            # Step 4: Filter collections based on special collections and inclusion/exclusion
             collections_to_pin = filter_collections(config, all_collections, active_special_collections, collections_to_pin_for_library, library_name, selected_collections_last_week)
             
-            # Step 5: Pin the collections
             if collections_to_pin:
                 pin_collections(collections_to_pin, config)
-                # Add newly selected collections to today's list
                 selected_collections[current_day].extend([c.title for c in collections_to_pin])
-                # Save selected collections while keeping the past week's data
                 save_selected_collections(selected_collections)
             else:
                 logging.info(f"No collections available to pin for library: {library_name}.")
