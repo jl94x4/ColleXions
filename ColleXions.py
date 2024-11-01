@@ -138,6 +138,19 @@ def unpin_collections(plex, library_names, exclusion_list):
 
 # Check for special scheduled collections that are within the active date range
 def get_active_special_collections(config):
+
+    import pytz  # Add timezone support
+    tz = pytz.timezone("UTC")  # Set the timezone to UTC, or update this to the user's specific timezone if needed
+    current_date = datetime.now(tz).date()  # Ensure current_date reflects timezone
+    
+    # Log start, end, and current date for each special collection evaluation
+    print(f"[DEBUG] Current date for pinning: {current_date}")
+    for special in config.get('special_collections', []):
+        start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
+        end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year)
+        print(f"[DEBUG] Evaluating Special Collection: {special['collection_names']}")
+        print(f"[DEBUG] Start Date: {start_date}, End Date: {end_date}, Current Date: {current_date}")
+
     # Convert current_date to datetime at midnight for consistent comparison
     current_date = datetime.combine(datetime.now().date(), datetime.min.time())
     active_special_collections = []
@@ -173,6 +186,48 @@ def get_active_special_collections(config):
 
 # Function to filter collections, prioritizing special collections, then categories, and finally random selections
 def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name):
+
+    collections_to_pin = collections_to_pin if 'collections_to_pin' in locals() else []
+
+    # Debug logging to check collection inclusion decisions
+    print(f"[DEBUG] Checking collections for eligibility based on date and exclusion list...")
+    for collection in collections_to_pin:
+        print(f"[DEBUG] Collection: {collection} - Eligible for Pinning: {'YES' if collection in active_special_collections else 'NO'}")
+
+    for collection in collections_to_pin:
+        if collection in active_special_collections:
+            # Confirm the collection's eligibility within date range again as a final check
+            special_collection_active = False
+            for special in config.get('special_collections', []):
+                if collection in special['collection_names']:
+                    start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
+                    end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year)
+                    if start_date <= current_date <= end_date:
+                        special_collection_active = True
+                        break
+            if not special_collection_active:
+                print(f"[DEBUG] Removing collection '{collection}' as it is outside of active date range.")
+                collections_to_pin.remove(collection)
+
+    # Perform a final validation of `collections_to_pin` to ensure no inactive special collections are included
+    final_collections_to_pin = []
+    for collection in collections_to_pin:
+        if collection in active_special_collections:
+            # Check date range for each collection one last time before adding
+            for special in config.get('special_collections', []):
+                if collection in special['collection_names']:
+                    start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year)
+                    end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year)
+                    if start_date <= current_date <= end_date:
+                        final_collections_to_pin.append(collection)
+                        break
+            else:
+                print(f"[DEBUG] Collection '{collection}' removed in final cleanup as it is outside of date range.")
+        else:
+            final_collections_to_pin.append(collection)
+
+    collections_to_pin = final_collections_to_pin  # Reassign filtered list
+
     exclusion_set = set(config.get('exclusion_list', []))
     collections_to_pin = []
 
