@@ -151,6 +151,7 @@ def get_active_special_collections(config):
 
 def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name):
     exclusion_set = set(config.get('exclusion_list', []))
+    special_collections_set = set(active_special_collections)
     collections_to_pin = []
 
     # Step 1: Pin active special collections within date range
@@ -163,7 +164,7 @@ def filter_collections(config, all_collections, active_special_collections, coll
     categories = config.get('categories', {}).get(library_name, {})
     if remaining_slots > 0:
         for category, collection_names in categories.items():
-            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in exclusion_set]
+            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in exclusion_set and c.title not in special_collections_set]
             if category_collections:
                 selected_collection = random.choice(category_collections)
                 collections_to_pin.append(selected_collection)
@@ -171,13 +172,15 @@ def filter_collections(config, all_collections, active_special_collections, coll
                 if remaining_slots == 0:
                     break
 
-    # Step 3: If slots still remain, add random collections
+    # Step 3: If slots still remain, add random collections excluding special and excluded collections
     if remaining_slots > 0:
-        available_collections = [c for c in all_collections if c.title not in exclusion_set and c.title not in active_special_collections]
+        available_collections = [c for c in all_collections if c.title not in exclusion_set and c.title not in special_collections_set]
         random.shuffle(available_collections)
         collections_to_pin.extend(available_collections[:remaining_slots])
 
+    logging.info(f"Final prioritized collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
+
 
 def main():
     config = load_config()
