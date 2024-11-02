@@ -114,16 +114,18 @@ def unpin_collections(plex, library_names, exclusion_list):
                 hub.demoteShared()
                 logging.info(f"Collection '{collection.title}' unpinned successfully.")
 
+from datetime import datetime, timedelta
+
 def get_active_special_collections(config):
     current_date = datetime.now().date()  # Today's date without time component
     active_special_collections = []
 
     for special in config.get('special_collections', []):
-        # Parse start and end dates as date objects
+        # Parse start and end dates as date objects for the current year
         start_date = datetime.strptime(special['start_date'], '%m-%d').replace(year=current_date.year).date()
         end_date = datetime.strptime(special['end_date'], '%m-%d').replace(year=current_date.year).date()
 
-        # Add one day to make end date exclusive, so it includes only up to but not including the end date
+        # Adjust end date to be exclusive, so it includes only up to but not including the end date
         end_date_exclusive = end_date + timedelta(days=1)
 
         # Handle cross-year range by dividing it into two segments if needed
@@ -148,38 +150,53 @@ def get_active_special_collections(config):
     return active_special_collections
 
 
-
 def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name):
     exclusion_set = set(config.get('exclusion_list', []))
-    special_collections_set = set(active_special_collections)
+    special_collections_set = set(active_special_collections)  # Active special collections only
+    all_special_collections = set()  # This will contain all special collections defined in config
+
+    # Extract all special collections from the config, not just active ones
+    for special in config.get('special_collections', []):
+        all_special_collections.update(special['collection_names'])
+
+    # Collections that should be excluded from random selection (inactive special collections + exclusion list)
+    fully_excluded_collections = exclusion_set.union(all_special_collections - special_collections_set)
+
     collections_to_pin = []
 
-    # Step 1: Pin active special collections within date range
+    # Step 1: Pin only active special collections
     for special_collection in active_special_collections:
         matched_collections = [c for c in all_collections if c.title == special_collection and c.title not in exclusion_set]
         collections_to_pin.extend(matched_collections)
+        logging.info(f"Added special collection '{special_collection}' to pinning list")
 
-    # Step 2: If slots remain, add collections from configured categories
+    # Step 2: If slots remain, add collections from configured categories, excluding all special collections
     remaining_slots = collection_limit - len(collections_to_pin)
     categories = config.get('categories', {}).get(library_name, {})
     if remaining_slots > 0:
         for category, collection_names in categories.items():
-            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in exclusion_set and c.title not in special_collections_set]
+            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in fully_excluded_collections]
             if category_collections:
                 selected_collection = random.choice(category_collections)
                 collections_to_pin.append(selected_collection)
+                logging.info(f"Added '{selected_collection.title}' from category '{category}' to pinning list")
                 remaining_slots -= 1
                 if remaining_slots == 0:
                     break
 
-    # Step 3: If slots still remain, add random collections excluding special and excluded collections
+    # Step 3: If slots still remain, add random collections excluding all special collections and excluded collections
     if remaining_slots > 0:
-        available_collections = [c for c in all_collections if c.title not in exclusion_set and c.title not in special_collections_set]
+        available_collections = [c for c in all_collections if c.title not in fully_excluded_collections]
+        logging.info(f"Available collections for random selection (fully excludes inactive special collections): {[c.title for c in available_collections]}")
+        
         random.shuffle(available_collections)
         collections_to_pin.extend(available_collections[:remaining_slots])
+        logging.info(f"Randomly selected collections to fill remaining slots: {[c.title for c in available_collections[:remaining_slots]]}")
 
-    logging.info(f"Final prioritized collections to pin for {library_name}: {[c.title for c in collections_to_pin]}")
+    # Final debug log for collections pinned
+    logging.info(f"Final collections selected for pinning in {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
+
 
 
 def main():
