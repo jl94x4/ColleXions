@@ -43,6 +43,9 @@ The ColleXions tool organizes pinned collections based on a defined priority sys
 
 If no special collections or categories are defined, ColleXions will automatically fill all slots with random collections, ensuring your library's home screen remains populated with the amounts specified in your config.
 
+## Selected Collections
+
+A file titled ```selected_collections.json``` is created on first run and updated each run afterwards and keeps track of what's been selected to ensure collections don't get picked repeatedly leaving other collections not being pinned as much. It resets after 3 days so hopefully you will only see a collection once every three days at most. This will depend on the amount of collections you have available and the amount you are asking ColleXions to pin will also play a part.
 
 ## Installation
 Extract the files in the location you wish to run it from
