@@ -25,6 +25,9 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 - If always_call is set to false, the script randomly decides for each category whether to pin a collection from the category. If it chooses to pin, it will only pick one collection per category.
 
+> [!TIP]
+> If you have more than 20 collections per category it is recommended to use ```true``` otherwise choose false
+
 ## Include & Exclude Collections
 
 - **Exclude Collections:** The exclusion list allows you to specify collections that should never be pinned or unpinned by ColleXions. These collections are "blacklisted," meaning that even if they are randomly selected or included in the special collections, they will be skipped, any collections you have manually pinned that are in this list will not be unpinned either. This is especially useful if you have "Trending" collections that you wish to be pinned to your home screen at all times.
@@ -66,6 +69,9 @@ Run ```python3 ColleXions.py```
 
 ## Docker Run
 
+> [!CAUTION]
+> You should never share your Plex token with anyone else.
+
 Download the ```config.json``` and edit to your liking
 
 https://github.com/jl94x4/ColleXions/blob/main/config.json
@@ -93,7 +99,8 @@ services:
 
 Then run ```docker-compose up -d```
 
-- **Pinning interval is in minutes, not seconds!**
+> [!TIP]
+> pinning_interval is in minutes
 
 ## Discord Webhooks (optional)
 
