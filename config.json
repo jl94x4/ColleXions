@@ -7,9 +7,10 @@
     ],
     "exclusion_list": [
         "Exclusion 1",
-        "Exclusion 2"
+        "Exclusion 2",
+        "Exclusion 3"
     ],
-    "use_inclusion_list": true,
+    "use_inclusion_list": false,
     "include_list": [
         "Inclusion 1",
         "Inclusion 2",
@@ -25,28 +26,28 @@
         "Movies": 4,
         "TV Shows": 3
     },
-    "categories": {
-        "Movies": {
-            "Category 1": [
-                "Inclusion 1",
-                "Inclusion 2"
-            ],
-            "Category 2": [
-                "Inclusion 3",
-                "Inclusion 4" 
-            ]
-        },
-        "TV Shows": {
-            "Category 3": [
-                "Inclusion 5", 
-                "Inclusion 6"
-            ],
-            "Category 4": [
-                "Inclusion 7",
-                "Inclusion 8"
-            ]  
-        }
+"categories": {
+    "Movies": {
+        "Category 1": [
+            "Inclusion 1",
+            "Inclusion 2"
+        ],
+        "Category 2": [
+            "Inclusion 3",
+            "Inclusion 4"
+        ]
     },
+    "TV Shows": {
+        "Category 3": [
+            "Inclusion 5",
+            "Inclusion 6"
+        ],
+        "Category 4": [
+            "Inclusion 7",
+            "Inclusion 8"
+        ]
+    }
+},
     "special_collections": [
         {
             "start_date": "10-01",
@@ -62,6 +63,7 @@
                 "Christmas Collection" 
             ]
         }
-
-    ]
+    ],
+    "discord_webhook_url": "<webhook-url>"
 }
+
