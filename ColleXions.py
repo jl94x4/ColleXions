@@ -172,30 +172,39 @@ def filter_collections(config, all_collections, active_special_collections, coll
 
     # Step 2: If slots remain, add collections from configured categories, excluding all special collections
     remaining_slots = collection_limit - len(collections_to_pin)
-    categories = config.get('categories', {}).get(library_name, {})
+    categories_config = config.get('categories', {}).get(library_name, {})
+    always_call = categories_config.pop('always_call', True)  # Remove always_call to avoid iterating over it
+
     if remaining_slots > 0:
-        for category, collection_names in categories.items():
+        for category, collection_names in categories_config.items():
             category_collections = [c for c in all_collections if c.title in collection_names and c.title not in fully_excluded_collections]
-            if category_collections:
-                selected_collection = random.choice(category_collections)
-                collections_to_pin.append(selected_collection)
-                logging.info(f"Added '{selected_collection.title}' from category '{category}' to pinning list")
-                remaining_slots -= 1
-                if remaining_slots == 0:
-                    break
+            
+            if always_call:
+                # Always select one collection per category if slots are available
+                if category_collections and remaining_slots > 0:
+                    selected_collection = random.choice(category_collections)
+                    collections_to_pin.append(selected_collection)
+                    logging.info(f"Added '{selected_collection.title}' from category '{category}' to pinning list")
+                    remaining_slots -= 1
+            else:
+                # Random chance to select one collection per category, or skip entirely
+                if category_collections and remaining_slots > 0 and random.choice([True, False]):
+                    selected_collection = random.choice(category_collections)
+                    collections_to_pin.append(selected_collection)
+                    logging.info(f"Added '{selected_collection.title}' from category '{category}' to pinning list")
+                    remaining_slots -= 1
 
-    # Step 3: If slots still remain, add random collections excluding all special collections and excluded collections
-    if remaining_slots > 0:
-        available_collections = [c for c in all_collections if c.title not in fully_excluded_collections]
-        logging.info(f"Available collections for random selection (fully excludes inactive special collections): {[c.title for c in available_collections]}")
-        
-        random.shuffle(available_collections)
-        collections_to_pin.extend(available_collections[:remaining_slots])
-        logging.info(f"Randomly selected collections to fill remaining slots: {[c.title for c in available_collections[:remaining_slots]]}")
+    # Step 3: If there are still remaining slots, fill them with random collections
+    random_collections = [c for c in all_collections if c.title not in fully_excluded_collections]
+    while remaining_slots > 0 and random_collections:
+        selected_collection = random.choice(random_collections)
+        collections_to_pin.append(selected_collection)
+        logging.info(f"Added random collection '{selected_collection.title}' to pinning list")
+        remaining_slots -= 1
+        random_collections.remove(selected_collection)
 
-    # Final debug log for collections pinned
-    logging.info(f"Final collections selected for pinning in {library_name}: {[c.title for c in collections_to_pin]}")
     return collections_to_pin
+
 
 
 
