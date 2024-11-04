@@ -7,7 +7,8 @@
     ],
     "exclusion_list": [
         "Exclusion 1",
-        "Exclusion 2"
+        "Exclusion 2",
+        "Exclusion 3"
     ],
     "use_inclusion_list": false,
     "include_list": [
