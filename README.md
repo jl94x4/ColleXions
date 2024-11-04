@@ -17,12 +17,12 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 - **Categorize Collections:** Users can put collections into categories to ensure a variety of collection are chosen if some are too similar
 
+- **Collection History:** Collections are remembered so they don't get chosen too often
+
 ## Category Processing:
 
 - If always_call is set to true, the script will attempt to pin one collection from each category at all times, as long as there are available slots.
 - If always_call is set to false, the script randomly decides for each category whether to pin a collection from the category. If it chooses to pin, it will only pick one collection per category.
-
-**Collection History:** Collections are remembered so they don't get chosen too often
 
 ## Include & Exclude Collections
 
