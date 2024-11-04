@@ -21,9 +21,9 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 ## Category Processing:
 
-- If always_call is set to true, the script will attempt to pin one collection from each category at all times, as long as there are available slots.
+- If ```always_call``` is set to ```true```, the script will attempt to pin one collection from each category at all times, as long as there are available slots.
 
-- If always_call is set to false, the script randomly decides for each category whether to pin a collection from the category. If it chooses to pin, it will only pick one collection per category.
+- If ```always_call``` is set to ```false```, the script randomly decides for each category whether to pin a collection from the category. If it chooses to pin, it will only pick one collection per category.
 
 > [!TIP]
 > If you have more than 20 collections per category it is recommended to use ```true```
