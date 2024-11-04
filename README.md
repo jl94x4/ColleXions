@@ -60,6 +60,9 @@ Run ```python3 ColleXions.py```
 
 ## Docker Run
 
+> [!CAUTION]
+> You should never share your Plex token with anyone else.
+
 Download the ```config.json``` and edit to your liking
 
 https://github.com/jl94x4/ColleXions/blob/main/config.json
@@ -87,7 +90,8 @@ services:
 
 Then run ```docker-compose up -d```
 
-- **Pinning interval is in minutes, not seconds!**
+> [!TIP]
+> pinning_interval is in minutes
 
 ## Discord Webhooks (optional)
 
