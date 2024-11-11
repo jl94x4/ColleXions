@@ -150,51 +150,62 @@ def get_active_special_collections(config):
     return active_special_collections
 
 
-def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name):
+def get_fully_excluded_collections(config, active_special_collections):
     exclusion_set = set(config.get('exclusion_list', []))
-    special_collections_set = set(active_special_collections)  # Active special collections only
-    all_special_collections = set()  # This will contain all special collections defined in config
+    all_special_collections = set(
+        col for special in config.get('special_collections', []) for col in special['collection_names']
+    )
+    return exclusion_set.union(all_special_collections - set(active_special_collections))
 
-    # Extract all special collections from the config, not just active ones
-    for special in config.get('special_collections', []):
-        all_special_collections.update(special['collection_names'])
+def select_from_special_collections(active_special_collections, all_collections, exclusion_set):
+    return [
+        c for special in active_special_collections
+        for c in all_collections if c.title == special and c.title not in exclusion_set
+    ]
 
-    # Collections that should be excluded from random selection (inactive special collections + exclusion list)
-    fully_excluded_collections = exclusion_set.union(all_special_collections - special_collections_set)
-
+def select_from_categories(categories_config, all_collections, exclusion_set, remaining_slots):
     collections_to_pin = []
-
-    # Step 1: Pin only active special collections
-    for special_collection in active_special_collections:
-        matched_collections = [c for c in all_collections if c.title == special_collection and c.title not in exclusion_set]
-        collections_to_pin.extend(matched_collections)
-        logging.info(f"Added special collection '{special_collection}' to pinning list")
-
-    # Step 2: If slots remain, add collections from configured categories, excluding all special collections
-    remaining_slots = collection_limit - len(collections_to_pin)
-    categories = config.get('categories', {}).get(library_name, {})
-    if remaining_slots > 0:
-        for category, collection_names in categories.items():
-            category_collections = [c for c in all_collections if c.title in collection_names and c.title not in fully_excluded_collections]
-            if category_collections:
+    always_call = categories_config.pop('always_call', True)
+    for category, collection_names in categories_config.items():
+        category_collections = [
+            c for c in all_collections if c.title in collection_names and c.title not in exclusion_set
+        ]
+        if category_collections and remaining_slots > 0:
+            if always_call or random.choice([True, False]):
                 selected_collection = random.choice(category_collections)
                 collections_to_pin.append(selected_collection)
                 logging.info(f"Added '{selected_collection.title}' from category '{category}' to pinning list")
                 remaining_slots -= 1
-                if remaining_slots == 0:
-                    break
+    return collections_to_pin, remaining_slots
 
-    # Step 3: If slots still remain, add random collections excluding all special collections and excluded collections
+def fill_with_random_collections(random_collections, remaining_slots):
+    collections_to_pin = []
+    while remaining_slots > 0 and random_collections:
+        selected_collection = random.choice(random_collections)
+        collections_to_pin.append(selected_collection)
+        logging.info(f"Added random collection '{selected_collection.title}' to pinning list")
+        remaining_slots -= 1
+        random_collections.remove(selected_collection)
+    return collections_to_pin
+
+def filter_collections(config, all_collections, active_special_collections, collection_limit, library_name):
+    fully_excluded_collections = get_fully_excluded_collections(config, active_special_collections)
+    collections_to_pin = []
+
+    # Step 1: Pin only active special collections
+    collections_to_pin.extend(select_from_special_collections(active_special_collections, all_collections, fully_excluded_collections))
+    remaining_slots = collection_limit - len(collections_to_pin)
+
+    # Step 2: Pin collections from categories if slots remain
     if remaining_slots > 0:
-        available_collections = [c for c in all_collections if c.title not in fully_excluded_collections]
-        logging.info(f"Available collections for random selection (fully excludes inactive special collections): {[c.title for c in available_collections]}")
-        
-        random.shuffle(available_collections)
-        collections_to_pin.extend(available_collections[:remaining_slots])
-        logging.info(f"Randomly selected collections to fill remaining slots: {[c.title for c in available_collections[:remaining_slots]]}")
+        categories_config = config.get('categories', {}).get(library_name, {})
+        category_pins, remaining_slots = select_from_categories(categories_config, all_collections, fully_excluded_collections, remaining_slots)
+        collections_to_pin.extend(category_pins)
 
-    # Final debug log for collections pinned
-    logging.info(f"Final collections selected for pinning in {library_name}: {[c.title for c in collections_to_pin]}")
+    # Step 3: Fill remaining slots with random collections
+    random_collections = [c for c in all_collections if c.title not in fully_excluded_collections]
+    collections_to_pin.extend(fill_with_random_collections(random_collections, remaining_slots))
+
     return collections_to_pin
 
 

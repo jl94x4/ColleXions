@@ -28,6 +28,7 @@
     },
 "categories": {
     "Movies": {
+        "always_call": false,
         "Category 1": [
             "Inclusion 1",
             "Inclusion 2"
@@ -38,6 +39,7 @@
         ]
     },
     "TV Shows": {
+        "always_call": false,
         "Category 3": [
             "Inclusion 5",
             "Inclusion 6"

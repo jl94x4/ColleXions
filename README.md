@@ -19,6 +19,14 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 - **Collection History:** Collections are remembered so they don't get chosen too often
 
+## Category Processing:
+
+- If ```always_call``` is set to ```true```, the script will attempt to pin one collection from each category at all times, as long as there are available slots.
+
+- If ```always_call``` is set to ```false```, the script randomly decides for each category whether to pin a collection from the category. If it chooses to pin, it will only pick one collection per category.
+
+> [!TIP]
+> If you have more than 20 collections per category it is recommended to use ```true```
 ## Include & Exclude Collections
 
 - **Exclude Collections:** The exclusion list allows you to specify collections that should never be pinned or unpinned by ColleXions. These collections are "blacklisted," meaning that even if they are randomly selected or included in the special collections, they will be skipped, any collections you have manually pinned that are in this list will not be unpinned either. This is especially useful if you have "Trending" collections that you wish to be pinned to your home screen at all times.
