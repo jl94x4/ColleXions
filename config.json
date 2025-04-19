@@ -10,6 +10,10 @@
         "Exclusion 2",
         "Exclusion 3"
     ],
+    "regex_exclusion_patterns": [
+        "Add key words to be excluded here",
+        "Add another key word to be excluded here"
+    ],    
     "use_inclusion_list": false,
     "include_list": [
         "Inclusion 1",
