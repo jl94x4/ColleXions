@@ -60,7 +60,7 @@ If no special collections or categories are defined, ColleXions will automatical
 
 ## Selected Collections
 
-A file titled ``selected_collections.json`` is created on first run and updated each run afterwards and keeps track of what's been selected to ensure collections don't get picked repeatedly leaving other collections not being pinned as much. It resets after 3 days so hopefully you will only see a collection once every three days at most. This will depend on the amount of collections you have available and the amount you are asking ColleXions to pin will also play a part.
+A file titled ``selected_collections.json`` is created on first run and updated each run afterwards and keeps track of what's been selected to ensure collections don't get picked repeatedly leaving other collections not being pinned as much. This can be configured in the config under ```"repeat_block_hours": 12,``` - this is the amount of time between the first pin, and the amount of hours until the pinned collection can be selected again. Setting this to a high value may mean that you run out of collections to pin.
 
 ## Installation
 Extract the files in the location you wish to run it from
@@ -71,37 +71,12 @@ Update the ```config.json``` file with your Plex URL, token, library names, and 
 
 Run ```python3 ColleXions.py```
 
-## Docker Run
-
 > [!CAUTION]
 > You should never share your Plex token with anyone else.
 
 Download the ```config.json``` and edit to your liking
 
 https://github.com/jl94x4/ColleXions/blob/main/config.json
-
-```
-docker run -it --name ColleXions \
-  -v /path/to/collexions/config.json:/app/config.json \
-  -v /path/to/collexions/logs:/app/logs \
-  docker.io/jl94x4/collexions
-```
-
-## Docker Compose
-
-```version: '3.8'
-
-services:
-  collexions:
-    image: jl94x4/collexions
-    container_name: collexions
-    volumes:
-      - /path/to/collexions/config.json:/app/config.json
-      - /path/to/collexions/logs:/app/logs
-    restart: unless-stopped
-```
-
-Then run ```docker-compose up -d```
 
 > [!TIP]
 > pinning_interval is in minutes
