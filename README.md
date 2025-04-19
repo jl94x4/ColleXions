@@ -27,6 +27,11 @@ Version 1.11+ includes collaboration with @[defluophoenix](https://github.com/jl
 
 > [!TIP]
 > If you have more than 20 collections per category it is recommended to use ```true```
+
+## **NEW** Regex Keyword Filtering
+
+- **Regex Filter:** Collexions now includes an option inside the config to filter out key words for collections to be excluded from being selected for being pinned. An example of this would be a Movie collection, such as "The Fast & The Furious Collection, The Mean Girls Collection and "The Matrix Collection" - by using the word "Collection" as a regex filter it would make all collections using this word be excluded from being able to be selected for pinning. Please see updated Config file new section!
+
 ## Include & Exclude Collections
 
 - **Exclude Collections:** The exclusion list allows you to specify collections that should never be pinned or unpinned by ColleXions. These collections are "blacklisted," meaning that even if they are randomly selected or included in the special collections, they will be skipped, any collections you have manually pinned that are in this list will not be unpinned either. This is especially useful if you have "Trending" collections that you wish to be pinned to your home screen at all times.
