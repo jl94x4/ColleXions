@@ -26,6 +26,7 @@
         "Inlcusion 8"
     ],
     "pinning_interval": 180,
+    "repeat_block_hours": 12,
     "number_of_collections_to_pin": {
         "Movies": 4,
         "TV Shows": 3
