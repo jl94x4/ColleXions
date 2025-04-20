@@ -66,12 +66,12 @@ A file titled ``selected_collections.json`` is created on first run and updated 
 
 ## Docker Installation
 
-docker run -d \
-  --name=collexions \
-  --restart=unless-stopped \
-  -e TZ="Your/Timezone" \
-  -v /path/to/your/appdata/collexions:/app \
-  jl94x4/collexions:latest
+> docker run -d \
+>  --name=collexions \
+>  --restart=unless-stopped \
+>  -e TZ="Your/Timezone" \
+>  -v /path/to/your/appdata/collexions:/app \
+>  jl94x4/collexions:latest
 
 ## Running The Script
 Extract the files in the location you wish to run it from
