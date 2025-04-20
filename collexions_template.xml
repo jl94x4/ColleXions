@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Collexions</Name>
+  <Repository>jl94x4/collexions:latest</Repository> <Registry>https://hub.docker.com/r/jl94x4/collexions/</Registry> <Network>bridge</Network> <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/jl94x4/ColleXions/issues</Support> <Project>https://github.com/jl94x4/ColleXions</Project> <Overview>
+    Collexions is a Python script that automatically manages pinned collections on the Plex home screen for specified libraries. It runs in a continuous loop, periodically unpinning old collections and pinning a new selection based on rules defined in config.json (special dates, categories, exclusions, recency, minimum item count). Uses the plexapi library. Requires config.json to be set up in the AppData path.
+  </Overview>
+  <Category>Tools: MediaServer:Plex Status:Beta</Category> <WebUI/> <TemplateURL>https://github.com/jl94x4/ColleXions/blob/main/collexions_template.xml</TemplateURL> <Icon>https://icons.iconarchive.com/icons/blackvariant/button-ui-nik-collection/256/Nik-Collection-icon.png</Icon> <ExtraParams/> <Description>Automatically rotate pinned Plex collections based on configurable rules.</Description> <Config Name="Config File" Target="/app/" Default="/mnt/user/appdata/Collexions" Mode="rw" Description="Container Path: /app - Host path where your config.json is stored. Create the file here before starting." Type="Path" Display="always" Required="true" Mask="false"/>
+
+  </Container>
