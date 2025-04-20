@@ -27,6 +27,7 @@
     ],
     "pinning_interval": 180,
     "repeat_block_hours": 12,
+    "min_items_for_pinning": 10,
     "number_of_collections_to_pin": {
         "Movies": 4,
         "TV Shows": 3
