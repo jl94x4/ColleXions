@@ -9,7 +9,6 @@
   </Overview>
   <Category>Tools: MediaServer:Plex Status:Beta</Category> <WebUI/> <TemplateURL>https://github.com/jl94x4/ColleXions/blob/main/collexions_template.xml</TemplateURL> <Icon>https://icons.iconarchive.com/icons/blackvariant/button-ui-nik-collection/256/Nik-Collection-icon.png</Icon> <ExtraParams/> <Description>Automatically rotate pinned Plex collections based on configurable rules.</Description> <Config Name="Config File" Target="/app/" Default="/mnt/user/appdata/Collexions" Mode="rw" Description="Container Path: /app - Host path where your config.json is stored. Create the file here before starting." Type="Path" Display="always" Required="true" Mask="false"/>
 
-  <Config Name="State File" Target="/app" Default="/mnt/user/appdata/Collexions" Mode="rw" Description="Container Path: /app - Host path where the script stores its history." Type="Path" Display="always" Required="false" Mask="false"/>
-  <Config Name="Log Directory" Target="/app/logs" Default="/mnt/user/appdata/Collexions/logs/" Mode="rw" Description="Container Path: /app/logs - Host path where the script stores its log files." Type="Path" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Config Dir" Target="/app" Default="/mnt/user/appdata/Collexions" Mode="rw" Description="Container Path: /app - Host path where the script stores its history." Type="Path" Display="always" Required="false" Mask="false"/>
 
   </Container>
