@@ -21,6 +21,8 @@ Version 1.11-1.16 includes collaboration with @[defluophoenix](https://github.co
 
 - **Collection History:** Collections are remembered so they don't get chosen too often
 
+- **Item Limits:** Use `"min_items_for_pinning": 10,` to make any collections with a lower amount of items in the collection be automatically excluded from selection for pinning. 
+
 ## Category Processing:
 
 - If ```always_call``` is set to ```true```, the script will attempt to pin one collection from each category at all times, as long as there are available slots.
