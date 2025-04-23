@@ -15,6 +15,8 @@ Version 1.11-1.16 includes collaboration with @[defluophoenix](https://github.co
 
 - **Inclusion List:** Users can specify collections to include from pinning, ensuring full control over the collections you see on your home screen.
 
+- **Label Support:** Collexions will add a label (user defined in config) to each collection that is pinned, and will remove the collection when unpinned. This is great for Kometa support with labels.
+
 - **Customizable Settings:** Users can easily adjust library names, pinning intervals, and the number of collections to pin, tailoring the experience to their preferences.
 
 - **Categorize Collections:** Users can put collections into categories to ensure a variety of collection are chosen if some are too similar
