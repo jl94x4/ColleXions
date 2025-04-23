@@ -26,6 +26,7 @@
         "Inlcusion 8"
     ],
     "pinning_interval": 180,
+    "collexions_label": "Collexions",
     "repeat_block_hours": 12,
     "min_items_for_pinning": 10,
     "number_of_collections_to_pin": {
