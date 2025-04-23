@@ -137,21 +137,44 @@ def get_collections_from_all_libraries(plex, library_names):
         except Exception as e: logging.error(f"Error fetching from '{library_name}': {e}")
     return all_collections
 
+# --- MODIFIED FUNCTION ---
 def pin_collections(collections, config):
     """Pins the provided list of collections and sends individual Discord notifications."""
-    if not collections: logging.info("Pin list is empty."); return
+    if not collections:
+        logging.info("Pin list is empty.")
+        return
     webhook_url = config.get('discord_webhook_url')
     for collection in collections:
         coll_title = getattr(collection, 'title', 'Untitled')
         try:
-            if not hasattr(collection, 'visibility'): logging.warning(f"Skip invalid: '{coll_title}'."); continue
+            if not hasattr(collection, 'visibility'):
+                logging.warning(f"Skip invalid collection object: '{coll_title}'.")
+                continue
+
+            # --- Get item count ---
+            try:
+                item_count = collection.childCount
+            except Exception as e:
+                logging.warning(f"Could not get item count for '{coll_title}': {e}")
+                item_count = "Unknown" # Fallback if count fails
+
             logging.info(f"Attempting to pin: '{coll_title}'")
             hub = collection.visibility()
-            hub.promoteHome(); hub.promoteShared()
-            message = f"INFO - Collection '{coll_title}' pinned successfully."
-            logging.info(message)
-            if webhook_url: send_discord_message(webhook_url, message)
-        except Exception as e: logging.error(f"Error pinning '{coll_title}': {e}")
+            hub.promoteHome()
+            hub.promoteShared()
+
+            # --- Create messages (plain for log, Markdown for Discord) ---
+            log_message = f"INFO - Collection '{coll_title} - {item_count} Items' pinned successfully."
+            discord_message = f"INFO - Collection '**{coll_title} - {item_count} Items**' pinned successfully."
+            # --- End modification ---
+
+            logging.info(log_message) # Log the plain message
+            if webhook_url:
+                # Send the Markdown formatted message to Discord
+                send_discord_message(webhook_url, discord_message)
+        except Exception as e:
+            logging.error(f"Error pinning '{coll_title}': {e}")
+# --- END MODIFIED FUNCTION ---
 
 def send_discord_message(webhook_url, message):
     """Sends a message to the specified Discord webhook URL."""
@@ -314,8 +337,17 @@ def filter_collections(config, all_collections, active_special_collections, coll
         if coll_title in fully_excluded_collections: continue # Explicit list or inactive special
         if is_regex_excluded(coll_title, regex_patterns): continue
         try:
-            if c.childCount < min_items_threshold: logging.info(f"Excluding '{coll_title}' (low count: {c.childCount})"); continue
-        except Exception as e: logging.warning(f"Excluding '{coll_title}' (count error: {e})"); continue
+            # Use childCount attribute directly
+            if c.childCount < min_items_threshold:
+                logging.info(f"Excluding '{coll_title}' (low count: {c.childCount})")
+                continue
+        except AttributeError: # Handle cases where childCount might not exist
+             logging.warning(f"Excluding '{coll_title}' (AttributeError getting childCount)")
+             continue
+        except Exception as e: # Catch other potential errors
+             logging.warning(f"Excluding '{coll_title}' (count error: {e})")
+             continue
+
 
         # Check recency exclusion ONLY if it's NOT an active special collection
         if coll_title not in active_special_collections and coll_title in recently_pinned_non_special:
@@ -407,7 +439,7 @@ def main():
 
                 colls_to_pin = filter_collections(config, all_colls, active_specials, pin_limit, library_name, selected_collections)
                 if colls_to_pin:
-                    pin_collections(colls_to_pin, config)
+                    pin_collections(colls_to_pin, config) # Calls the modified function
                     # Add ALL pinned titles to the list for THIS run's tracking
                     newly_pinned_titles_this_run.extend([c.title for c in colls_to_pin if hasattr(c, 'title')])
                 else: logging.info(f"No collections selected for '{library_name}'.")
