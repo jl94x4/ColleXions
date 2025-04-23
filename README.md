@@ -104,6 +104,8 @@ ColleXions now includes a Discord Webhook Integration feature. This enhancement 
 
 **Notifications:** Every time a collection is successfully pinned, the tool sends a formatted message to the specified Discord channel, highlighting the collection name in bold.
 
+**Pinned Collection Item Count:** See item count for each collection that was selected for pinning. 
+
 This feature helps you keep track of which collections are being pinned, allowing for easy monitoring and tweaks to ensure diversity and relevance.
 
 ## Logging
