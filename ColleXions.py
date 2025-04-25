@@ -139,7 +139,6 @@ def get_collections_from_all_libraries(plex, library_names):
         except Exception as e: logging.error(f"Error fetching from '{library_name}': {e}")
     return all_collections
 
-# --- MODIFIED FUNCTION: pin_collections ---
 def pin_collections(collections, config):
     """Pins the provided list of collections, adds label, and sends individual Discord notifications."""
     if not collections:
@@ -180,7 +179,6 @@ def pin_collections(collections, config):
 
         except Exception as e:
             logging.error(f"Error processing/pinning '{coll_title}': {e}")
-# --- END MODIFIED FUNCTION ---
 
 def send_discord_message(webhook_url, message):
     """Sends a message to the specified Discord webhook URL."""
@@ -193,7 +191,6 @@ def send_discord_message(webhook_url, message):
     except requests.exceptions.RequestException as e: logging.error(f"Failed send to Discord: {e}")
     except Exception as e: logging.error(f"Discord message error: {e}")
 
-# --- MODIFIED FUNCTION: unpin_collections ---
 def unpin_collections(plex, library_names, exclusion_list, config):
     """Unpins currently promoted collections (removing label if present), respecting exclusions."""
     if not plex: return
@@ -265,7 +262,6 @@ def unpin_collections(plex, library_names, exclusion_list, config):
         except Exception as e: logging.error(f"General error during unpin process for library '{library_name}': {e}")
 
     logging.info(f"Unpinning check complete. Unpinned {unpinned_count} collections, removed label from {label_removed_count} collections.")
-# --- END MODIFIED FUNCTION ---
 
 
 def get_active_special_collections(config):
